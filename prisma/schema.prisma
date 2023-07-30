@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Ticket {
+  id  String @id @default(uuid())
+  name String
+  type String
+  quantity Int 
+  description String
+  price Int
+  published Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  purchasedTicket PurchasedTicket[]
+}
+
+model PurchasedTicket {
+  id String @id @default(uuid())
+  ticket Ticket @relation(fields: [masterTicketId], references: [id])
+  masterTicketId String
+  ticketStatus TicketStatus
+  ticketBookingId String
+  marthonDetail String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([masterTicketId])
+}
+
+model Booking {
+  id String @id @default(uuid())
+  payment Payment?
+  bookingStatus BookingStatus @default(Pending)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  bookingDetails BookingDetails[]
+}
+
+model BookingDetails {
+  id String @id @default(uuid())
+  booking Booking @relation(fields: [bookingId], references: [id])
+  bookingId String
+  masterTicketId String
+  quantity Int
+  price Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+model Payment {
+  id String @id @default(uuid())
+  amount Int
+  booking Booking @relation(fields: [bookingId], references: [id])
+  bookingId String @unique
+  status PaymentStatus @default(Pending)
+  paymentTime DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+enum PaymentStatus {
+  Pending
+  Paid
+  Refunded
+}
+
+enum BookingStatus {
+  Pending
+  Paid
+  Cancelled
+}
+
+enum TicketStatus {
+  VALID
+  INVALID
+}
