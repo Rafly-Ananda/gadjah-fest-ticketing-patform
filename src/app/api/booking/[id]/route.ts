@@ -42,3 +42,51 @@ export async function GET(
     }
   }
 }
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const booking = await prisma.booking.update({
+      where: {
+        id: params.id,
+      },
+      data: {
+        payment: {
+          delete: true,
+        },
+        bookingDetails: {
+          deleteMany: {
+            bookingId: params.id,
+          },
+        },
+        bookingStatus: "Cancelled",
+      },
+    });
+
+    if (booking) {
+      return NextResponse.json({
+        status: "Success",
+        message: "Booking Canceleld",
+        booking: booking,
+      }, {
+        status: 200,
+      });
+    } else {
+      return NextResponse.json({
+        status: "Success",
+        message: "Booking not found",
+        bookingId: params.id,
+      }, { status: 404 });
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      return NextResponse.json({
+        status: "Failed",
+        message: "Error occurred",
+        error: e.message,
+      }, { status: 500 });
+    }
+  }
+}

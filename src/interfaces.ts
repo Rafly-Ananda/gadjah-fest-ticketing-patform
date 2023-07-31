@@ -3,3 +3,8 @@ export interface TicketDetailsType {
   quantity: number;
   price: number;
 }
+
+export interface TicketAvailibilityType {
+  ticketId: string;
+  available: boolean;
+}
