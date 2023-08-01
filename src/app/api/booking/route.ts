@@ -133,7 +133,7 @@ export async function POST(
         ticketId: e.ticketId,
         name: masterTicket!.name,
         type: masterTicket!.type,
-        price: e.quantity * masterTicket!.price,
+        price: masterTicket!.price,
         quantity: e.quantity,
       };
     });
@@ -170,7 +170,7 @@ export async function POST(
       {
         external_id: newBooking.id,
         bookingCode: newBooking.generatedBookingCode,
-        amount: booking.details.map((e) => e.price * e.quantity),
+        amount: booking.details.map((e) => e.price).reduce((a, b) => a + b, 0),
         currency: "IDR",
         customer: {
           given_names: booking.user.firstName,
