@@ -61,7 +61,7 @@ export async function PUT(
             bookingId: params.id,
           },
         },
-        bookingStatus: "Cancelled",
+        bookingStatus: "EXPIRED",
       },
     });
 
