@@ -38,18 +38,21 @@ model PurchasedTicket {
   ticket Ticket @relation(fields: [masterTicketId], references: [id])
   masterTicketId String
   ticketStatus TicketStatus
-  ticketBookingId String
-  marthonDetail String?
+  booking Booking @relation(fields: [bookingId], references: [id])
+  bookingId String
+  marathonDetail String?
+  scannedTime DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   @@index([masterTicketId])
+  @@index([bookingId])
 }
 
 model Booking {
   id String @id @default(uuid())
   payment Payment?
-  bookingStatus BookingStatus @default(Pending)
+  bookingStatus BookingStatus @default(PENDING)
   generatedBookingCode String
   user User @relation(fields: [userId], references: [id])
   userId String 
@@ -57,6 +60,7 @@ model Booking {
   updatedAt DateTime @default(now())
 
   bookingDetails BookingDetails[]
+  purchasedTickets PurchasedTicket[]
 
   @@index([userId])
 }
@@ -66,6 +70,7 @@ model BookingDetails {
   booking Booking @relation(fields: [bookingId], references: [id])
   bookingId String
   masterTicketId String
+  itemStatus PendingTicketStatus
   quantity Int
   price Int
   createdAt DateTime @default(now())
@@ -79,7 +84,7 @@ model Payment {
   amount Int
   booking Booking @relation(fields: [bookingId], references: [id])
   bookingId String @unique
-  status PaymentStatus @default(Pending)
+  status PaymentStatus @default(PENDING)
   xenditInvoiceId String
   xenditInvoiceUrl String
   paymentTime DateTime
@@ -89,18 +94,23 @@ model Payment {
   @@index([bookingId])
 }
 
-
+enum PendingTicketStatus {
+  PENDING
+  PAID
+  REVOKED 
+}
 
 enum PaymentStatus {
-  Pending
-  Paid
-  Refunded
+  PENDING
+  PAID
+  REFUNDED
+  EXPIRED
 }
 
 enum BookingStatus {
-  Pending
-  Paid
-  Cancelled
+  PENDING
+  PAID
+  EXPIRED
 }
 
 enum TicketStatus {

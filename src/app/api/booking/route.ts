@@ -66,6 +66,12 @@ export async function POST(
       _sum: {
         quantity: true,
       },
+      where: {
+        AND: [
+          { itemStatus: "PAID" },
+          { itemStatus: "PENDING" },
+        ],
+      },
     }).then((res) => {
       if (res.length === 0) {
         return booking.details.map((e) => {
@@ -141,7 +147,7 @@ export async function POST(
     // ** 3 Create Booking & Details
     const newBooking = await prisma.booking.create({
       data: {
-        bookingStatus: "Pending",
+        bookingStatus: "PENDING",
         generatedBookingCode: generateBookingCode(10),
         bookingDetails: {
           create: booking.details.map((e) => {
@@ -149,6 +155,7 @@ export async function POST(
               masterTicketId: e.ticketId,
               quantity: e.quantity,
               price: e.price,
+              itemStatus: "PENDING",
             };
           }),
         },
@@ -164,13 +171,15 @@ export async function POST(
     });
 
     // ** 4 Create xenditInvoice
-
     const { data } = await axios.post(
       "https://api.xendit.co/v2/invoices",
       {
         external_id: newBooking.id,
         bookingCode: newBooking.generatedBookingCode,
-        amount: booking.details.map((e) => e.price).reduce((a, b) => a + b, 0),
+        amount: booking.details.map((e) => e.price * e.quantity).reduce(
+          (a, b) => a + b,
+          0,
+        ),
         currency: "IDR",
         customer: {
           given_names: booking.user.firstName,
@@ -191,6 +200,16 @@ export async function POST(
             price: e.price,
           };
         }),
+        fees: [
+          {
+            type: "Admin Fee",
+            value: (10 / 100) *
+              booking.details.map((e) => e.price * e.quantity).reduce(
+                (a, b) => a + b,
+                0,
+              ),
+          },
+        ],
       },
       {
         headers: {
@@ -212,7 +231,7 @@ export async function POST(
         amount: xenditInvoiceAmount,
         bookingId: newBooking.id,
         xenditInvoiceId: xenditInvoiceId,
-        status: "Pending",
+        status: "PENDING",
         paymentTime: xenditExpiryDate,
         xenditInvoiceUrl: xenditInvoiceUrl,
       },
@@ -229,6 +248,7 @@ export async function POST(
       },
     );
   } catch (e) {
+    console.log(e);
     if (e instanceof Error) {
       return NextResponse.json({
         status: "Failed to Book",
