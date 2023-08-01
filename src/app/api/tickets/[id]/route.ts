@@ -18,7 +18,7 @@ async function sendMail() {
   const mailOptions = {
     from: process.env.NODEMAILER_EMAIL,
     to: "kayzeel15@gmail.com",
-    subject: "Testo",
+    subject: "Testozz",
     text: "http://localhost:3000/",
   };
 
