@@ -9,6 +9,7 @@ async function sendMail() {
   console.log(process.env.NODEMAILER_PW);
   const transporter = nodemailer.createTransport({
     service: "gmail",
+    secureConnection: true,
     auth: {
       user: process.env.NODEMAILER_EMAIL,
       pass: process.env.NODEMAILER_PW,
