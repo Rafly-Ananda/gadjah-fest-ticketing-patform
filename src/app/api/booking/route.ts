@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { TicketAvailibilityType, TicketDetailsType } from "@/interfaces";
+import axios from "axios";
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
@@ -40,10 +41,13 @@ export async function GET(request: Request) {
 export async function POST(
   request: Request,
 ) {
-  let { booking }: { booking: TicketDetailsType[] } = await request.json();
-  const date = new Date();
+  let booking: TicketDetailsType = await request.json();
   const availabilityReturnObj: TicketAvailibilityType[] = [];
   let validToBook: boolean = true;
+  const xenditAuthToken = Buffer.from(`${process.env.XENDIT_API_KEY}:`)
+    .toString(
+      "base64",
+    );
 
   function generateBookingCode(length: number) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -56,24 +60,33 @@ export async function POST(
   }
 
   try {
-    // 1 Validate ticket availability
+    // ** 1 Validate ticket availability
     const bookedTicketsData = await prisma.bookingDetails.groupBy({
       by: ["masterTicketId"],
       _sum: {
         quantity: true,
       },
-    }).then((res) =>
-      res.map((e) => {
-        return {
-          masterTicketId: e.masterTicketId,
-          totalBooking: e._sum.quantity != null ? e._sum.quantity : 0,
-        };
-      })
-    );
+    }).then((res) => {
+      if (res.length === 0) {
+        return booking.details.map((e) => {
+          return {
+            masterTicketId: e.ticketId,
+            totalBooking: 0,
+          };
+        });
+      } else {
+        return res.map((e) => {
+          return {
+            masterTicketId: e.masterTicketId,
+            totalBooking: e._sum.quantity != null ? e._sum.quantity : 0,
+          };
+        });
+      }
+    });
 
     const masterTicketsData = await prisma.ticket.findMany({
       where: {
-        OR: booking.map((e) => {
+        OR: booking.details.map((e) => {
           return { id: { equals: e.ticketId } };
         }),
       },
@@ -83,13 +96,13 @@ export async function POST(
       const masterTicket = masterTicketsData.find((e) =>
         e.id === bookedTicketsData[i].masterTicketId
       );
-      const userTicketBookingQty = booking.find((e) =>
+      const userTicketBookingQty = booking.details.find((e) =>
         e.ticketId === bookedTicketsData[i].masterTicketId
       );
 
       if (
         bookedTicketsData[i].totalBooking + userTicketBookingQty!.quantity >
-          masterTicket!.quantity
+          masterTicket!.quantity || masterTicket!.quantity === 0
       ) {
         availabilityReturnObj.push({
           ticketId: masterTicket!.id,
@@ -112,24 +125,26 @@ export async function POST(
       }, { status: 200 });
     }
 
-    // 2 Create Booking
-    booking = booking.map((e) => {
+    // ** 2 Create Booking
+    booking.details = booking.details.map((e) => {
       let masterTicket = masterTicketsData.find((v) => v.id === e.ticketId);
 
       return {
         ticketId: e.ticketId,
+        name: masterTicket!.name,
+        type: masterTicket!.type,
         price: e.quantity * masterTicket!.price,
         quantity: e.quantity,
       };
     });
 
-    // 3 Create Booking & Details
+    // ** 3 Create Booking & Details
     const newBooking = await prisma.booking.create({
       data: {
         bookingStatus: "Pending",
         generatedBookingCode: generateBookingCode(10),
         bookingDetails: {
-          create: booking.map((e) => {
+          create: booking.details.map((e) => {
             return {
               masterTicketId: e.ticketId,
               quantity: e.quantity,
@@ -137,21 +152,78 @@ export async function POST(
             };
           }),
         },
+        user: {
+          create: {
+            firstName: booking.user.firstName,
+            lastName: booking.user.lastName,
+            email: booking.user.email,
+            mobileNumber: booking.user.mobileNumber,
+          },
+        },
       },
     });
 
-    // 4 Create Payment
+    // ** 4 Create xenditInvoice
+
+    const { data } = await axios.post(
+      "https://api.xendit.co/v2/invoices",
+      {
+        external_id: newBooking.id,
+        bookingCode: newBooking.generatedBookingCode,
+        amount: booking.details.map((e) => e.price * e.quantity),
+        currency: "IDR",
+        customer: {
+          given_names: booking.user.firstName,
+          surname: booking.user.lastName,
+          email: booking.user.email,
+          mobile_number: booking.user.mobileNumber,
+        },
+        customer_notification_preference: {
+          invoice_paid: ["email", "whatsapp"],
+        },
+        success_redirect_url: "example.com/success",
+        failure_redirect_url: "example.com/failure",
+        items: booking.details.map((e) => {
+          return {
+            name: e.name,
+            type: e.type,
+            quantity: e.quantity,
+            price: e.price,
+          };
+        }),
+      },
+      {
+        headers: {
+          "Authorization": `Basic ${xenditAuthToken}`,
+        },
+      },
+    );
+
+    const {
+      external_id: xenditInvoiceId,
+      invoice_url: xenditInvoiceUrl,
+      expiry_date: xenditExpiryDate,
+      amount: xenditInvoiceAmount,
+    } = data;
+
+    // ** 5 Create Payment
     await prisma.payment.create({
       data: {
-        amount: booking.map((e) => e.price).reduce((a, b) => a + b, 0),
+        amount: xenditInvoiceAmount,
         bookingId: newBooking.id,
+        xenditInvoiceId: xenditInvoiceId,
         status: "Pending",
-        paymentTime: new Date(date.getTime() + 5 * 60 * 1000),
+        paymentTime: xenditExpiryDate,
+        xenditInvoiceUrl: xenditInvoiceUrl,
       },
     });
 
     return NextResponse.json(
-      { status: "Success", message: "Booking success", booking: newBooking },
+      {
+        status: "Success",
+        message: "Booking successfuly created",
+        booking: { ...newBooking, invoiceUrl: xenditInvoiceUrl },
+      },
       {
         status: 201,
       },

@@ -7,7 +7,7 @@ async function main() {
     update: {},
     create: {
       name: "Day One Pass",
-      type: "",
+      type: "Event Pass",
       quantity: 200,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
@@ -20,7 +20,7 @@ async function main() {
     update: {},
     create: {
       name: "Day Two Pass",
-      type: "",
+      type: "Event Pass",
       quantity: 200,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
@@ -33,7 +33,7 @@ async function main() {
     update: {},
     create: {
       name: "Day One and Two Bundle Pass",
-      type: "",
+      type: "Marathon Pass",
       quantity: 200,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
@@ -46,7 +46,7 @@ async function main() {
     update: {},
     create: {
       name: "1 Km Marathon Pass",
-      type: "",
+      type: "Marathon Pass",
       quantity: 200,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
@@ -59,7 +59,7 @@ async function main() {
     update: {},
     create: {
       name: "10 Km Marathon Pass",
-      type: "",
+      type: "Marathon Pass",
       quantity: 200,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
@@ -72,7 +72,7 @@ async function main() {
     update: {},
     create: {
       name: "21 Km Marathon Pass",
-      type: "",
+      type: "Marathon Pass",
       quantity: 200,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",

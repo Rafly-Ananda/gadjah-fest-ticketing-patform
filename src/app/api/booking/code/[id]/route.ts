@@ -19,7 +19,7 @@ export async function GET(
 
     if (booking) {
       return NextResponse.json({
-        status: "Successed",
+        status: "Success",
         message: "Booking found",
         booking: booking,
       }, {

@@ -24,6 +24,15 @@ model Ticket {
   purchasedTicket PurchasedTicket[]
 }
 
+model User {
+  id String @id @default(uuid())
+  firstName String
+  lastName String
+  email String
+  mobileNumber String
+  booking Booking?
+}
+
 model PurchasedTicket {
   id String @id @default(uuid())
   ticket Ticket @relation(fields: [masterTicketId], references: [id])
@@ -42,10 +51,14 @@ model Booking {
   payment Payment?
   bookingStatus BookingStatus @default(Pending)
   generatedBookingCode String
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   bookingDetails BookingDetails[]
+
+  @@index([userId])
 }
 
 model BookingDetails {
@@ -67,12 +80,16 @@ model Payment {
   booking Booking @relation(fields: [bookingId], references: [id])
   bookingId String @unique
   status PaymentStatus @default(Pending)
+  xenditInvoiceId String
+  xenditInvoiceUrl String
   paymentTime DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   @@index([bookingId])
 }
+
+
 
 enum PaymentStatus {
   Pending
