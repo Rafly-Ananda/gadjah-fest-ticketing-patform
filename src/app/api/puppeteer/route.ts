@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
 
 import QRCode from "qrcode";
 const prisma = new PrismaClient();
@@ -55,45 +55,45 @@ const minimal_args = [
 ];
 const blocked_domains = ["googlesyndication.com", "adservice.google.com"];
 
-async function initPupetter() {
-  browser = await puppeteer.launch({
-    headless: "new",
-    executablePath: process.env.CHROME_BIN,
-    args: minimal_args,
-  });
-  page = await browser.newPage();
-  await page.setRequestInterception(true);
-  page.on("request", (request: any) => {
-    const url = request.url();
-    if (blocked_domains.some((domain) => url.includes(domain))) {
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
-}
+// async function initPupetter() {
+//   browser = await puppeteer.launch({
+//     headless: "new",
+//     executablePath: process.env.CHROME_BIN,
+//     args: minimal_args,
+//   });
+//   page = await browser.newPage();
+//   await page.setRequestInterception(true);
+//   page.on("request", (request: any) => {
+//     const url = request.url();
+//     if (blocked_domains.some((domain) => url.includes(domain))) {
+//       request.abort();
+//     } else {
+//       request.continue();
+//     }
+//   });
+// }
 
 export async function GET(request: Request) {
-  await initPupetter();
+  // await initPupetter();
 
-  console.time("pdf-runtime");
-  await page.goto(
-    "https://gadjah-fest-ticket-1a6f7gyzo-rafly-ananda.vercel.app",
-    {
-      waitUntil: "networkidle0",
-    },
-  );
-  const buffer = await page.pdf({ format: "a4" });
-  const s3Params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `pdfss`,
-    Body: buffer,
-    ContentType: "application/pdf",
-  };
+  // console.time("pdf-runtime");
+  // await page.goto(
+  //   "https://gadjah-fest-ticket-1a6f7gyzo-rafly-ananda.vercel.app",
+  //   {
+  //     waitUntil: "networkidle0",
+  //   },
+  // );
+  // const buffer = await page.pdf({ format: "a4" });
+  // const s3Params = {
+  //   Bucket: process.env.AWS_BUCKET_NAME,
+  //   Key: `pdfss`,
+  //   Body: buffer,
+  //   ContentType: "application/pdf",
+  // };
 
-  await s3Client.send(new PutObjectCommand(s3Params));
+  // await s3Client.send(new PutObjectCommand(s3Params));
 
-  console.timeEnd("pdf-runtime");
+  // console.timeEnd("pdf-runtime");
   return NextResponse.json({ message: "success pdfs" }, { status: 200 });
 }
 
