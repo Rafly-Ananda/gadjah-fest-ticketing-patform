@@ -78,7 +78,7 @@ export async function GET(request: Request) {
 
   console.time("pdf-runtime");
   await page.goto(
-    "http://localhost:3000",
+    "https://gadjah-fest-ticket-1a6f7gyzo-rafly-ananda.vercel.app",
     {
       waitUntil: "networkidle0",
     },

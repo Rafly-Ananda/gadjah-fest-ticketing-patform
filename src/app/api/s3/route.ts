@@ -31,7 +31,7 @@ export async function GET(request: Request): Promise<NextResponse> {
 
   const s3Params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `qrcode.${type}`,
+    Key: `qrcodezzz.${type}`,
     Body: base64Img,
     ContentEncoding: "base64",
     ContentType: `image/${type}`,
