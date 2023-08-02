@@ -42,6 +42,7 @@ model PurchasedTicket {
   bookingId String
   marathonDetail String?
   scannedTime DateTime?
+  s3BarcodeKeyUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 

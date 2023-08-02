@@ -3,7 +3,11 @@ import { prismaClientInstance } from "@/_base";
 import axios from "axios";
 const prisma = prismaClientInstance;
 import nodemailer from "nodemailer";
+import BookingTemplate from "@/emails-utils/BookingTemplate";
+import { render } from "@react-email/render";
 // const nodemailer = require("nodemailer");
+
+import QRCode from "qrcode";
 
 type EmailPayload = {
   to: string;
@@ -68,7 +72,13 @@ const sendEmail = async (data: EmailPayload) => {
   return await transporter.sendMail({
     from: process.env.SMTP_FROM_EMAIL,
     ...data,
-    text: "aiueo",
+    html: render(BookingTemplate()),
+    // attachments: [{
+    //   filename: "Document",
+    //   path:
+    //     "https://gadjah-ticket.s3.ap-southeast-1.amazonaws.com/Surat+Pengantar+Medical+Check-Up+-+Rafly+Ananda+Soemantri.pdf",
+    //   contentType: "application/pdf",
+    // }],
   });
 };
 
@@ -76,6 +86,15 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
+  const generateQR = async (text: any) => {
+    try {
+      console.log(await QRCode.toDataURL(text));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // generateQR("ayoo");
   await sendEmail({ to: "kayzeel15@gmail.com", subject: "Welcome to NextAPI" });
 
   return NextResponse.json({
