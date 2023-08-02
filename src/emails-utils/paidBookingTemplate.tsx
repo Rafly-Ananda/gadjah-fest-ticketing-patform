@@ -1,6 +1,5 @@
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -14,17 +13,18 @@ import {
   Text,
 } from "@react-email/components";
 import * as React from "react";
+import { PurchasedTicket } from "@prisma/client";
 
 interface BookingTemplateInterface {
   firstName?: string;
-  bookingLink?: string;
   bookingId: string;
+  tickets: Array<PurchasedTicket>;
 }
 
-export const BookingTemplate = ({
+export const PaidBookingTemplate = ({
   firstName,
-  bookingLink,
   bookingId,
+  tickets,
 }: BookingTemplateInterface) => {
   return (
     <Html>
@@ -43,27 +43,42 @@ export const BookingTemplate = ({
               />
             </Section>
             <Heading className="text-[#0a6c72] text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              <strong>Lakukan Pembayaran</strong>
+              <strong>Konfirmasi Pemesanan</strong>
             </Heading>
             <Text className="text-black text-[14px] leading-[24px]">
               Hallo, {firstName}
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              Kamu baru saja melakukan pemesanan tiket dengan booking id
-              <strong> {bookingId}</strong> untuk acara Gadjah Fest 2023, segera
-              lakukan pembayaran dengan menekan tombol link pembayaran dibawah
-              ini.
+              Pembayaran yang sudah kamu lakukan telah terkonfirmasi oleh
+              sistem, kode QR untuk tiket bisa kamu cek di lampiran email ini.
             </Text>
 
-            <Section className="text-center mt-[32px] mb-[32px]">
-              <Button
-                pX={20}
-                pY={12}
-                className="bg-[#0a6c72] rounded text-white text-[12px] font-semibold no-underline text-center"
-                href={bookingLink}
-              >
-                Link Pembayaran
-              </Button>
+            <Section className="flex items-center justify-center">
+              Kode Booking : <strong>{bookingId}</strong>
+            </Section>
+
+            <Section className="pt-5 items-center justify-center ">
+              {tickets &&
+                tickets.map((e: any, i) => (
+                  <Section
+                    key={i}
+                    className="p-5 rounded-lg border border-solid border-[#0a6c72] my-5"
+                  >
+                    <Img
+                      src={e.s3BarcodeKeyUrl}
+                      width="150"
+                      height="150"
+                      alt="Vercel"
+                      className="my-0 mx-auto"
+                    />
+                    <Section className="items">
+                      <ul className="text-sm list-none">
+                        <li>Ticket Name : {e.ticket.name}</li>
+                        <li>Ticket ID : {e.id}</li>
+                      </ul>
+                    </Section>
+                  </Section>
+                ))}
             </Section>
 
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
@@ -84,4 +99,4 @@ export const BookingTemplate = ({
   );
 };
 
-export default BookingTemplate;
+export default PaidBookingTemplate;

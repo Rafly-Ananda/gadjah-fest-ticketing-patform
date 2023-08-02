@@ -20,3 +20,15 @@ export interface TicketAvailibilityType {
   ticketId: string;
   available: boolean;
 }
+
+export interface buyerDataType {
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobileNumber: string;
+}
+
+export interface bookingTicketPayload {
+  ticketId: string;
+  quantity: number;
+}

@@ -11,10 +11,24 @@ export async function GET(
       where: {
         generatedBookingCode: params.id,
       },
-      include: {
-        bookingDetails: true,
-        payment: true,
+      select: {
+        generatedBookingCode: true,
+        purchasedTickets: {
+          include: {
+            ticket: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
+      // include: {
+      //   bookingDetails: true,
+      //   payment: true,
+      //   user: true,
+      //   purchasedTickets: true,
+      // },
     });
 
     if (booking) {

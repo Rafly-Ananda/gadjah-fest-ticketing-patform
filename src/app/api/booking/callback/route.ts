@@ -1,7 +1,55 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { uploadQRCodetoS3 } from "@/utils/s3Init";
+import { PurchasedTicket, TicketStatus } from "@prisma/client";
+import { generatePdf } from "@/utils/playwrightInit";
+import QRCode from "qrcode";
+import { render } from "@react-email/render";
+import nodemailer from "nodemailer";
+import PaidBookingTemplate from "@/emails-utils/paidBookingTemplate";
+import { user } from "@nextui-org/react";
 
 const prisma = new PrismaClient();
+
+interface EmailPayloatInterface {
+  to: string;
+  subject: string;
+  html?: string;
+  bookingId: string;
+  firstName: string;
+  tickets: Array<PurchasedTicket>;
+  attachmentLink: string;
+}
+
+const sendEmail = async (data: EmailPayloatInterface) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.NODEMAILER_EMAIL,
+      pass: process.env.NODEMAILER_PW,
+    },
+  });
+
+  return await transporter.sendMail({
+    from: process.env.SMTP_FROM_EMAIL,
+    ...data,
+    html: render(
+      PaidBookingTemplate({
+        firstName: data.firstName,
+        bookingId: data.bookingId,
+        tickets: data.tickets,
+      }),
+    ),
+    attachments: [{
+      filename: "Document",
+      path: data.attachmentLink,
+      contentType: "application/pdf",
+    }],
+  });
+};
 
 export async function POST(
   request: Request,
@@ -9,7 +57,7 @@ export async function POST(
   const body = await request.json();
 
   if (body.status === "PAID") {
-    // 1 Update booking status
+    // ** 1 Update booking status
     const updateBooking = await prisma.booking.update({
       where: {
         id: body.external_id,
@@ -43,19 +91,95 @@ export async function POST(
             bookingId: body.external_id,
           },
         },
+        user: true,
       },
     });
 
-    // 2 Generate ticket for QR
-    const generateTicket = await prisma.purchasedTicket.createMany({
-      data: updateBooking.bookingDetails.map((e) => {
-        return {
-          masterTicketId: e.masterTicketId,
-          ticketStatus: "VALID",
-          bookingId: e.bookingId,
-          marathonDetail: "", // TODO: isi ntar
-        };
-      }),
+    // ** 2 Generate ticket for QR
+    let purchasedTicketObj = [];
+    for (let i = 0; i < updateBooking.bookingDetails.length; i++) {
+      for (let j = 0; j < updateBooking.bookingDetails[i].quantity; j++) {
+        purchasedTicketObj.push({
+          masterTicketId: updateBooking.bookingDetails[i].masterTicketId,
+          ticketStatus: "VALID" as TicketStatus,
+          bookingId: updateBooking.bookingDetails[i].bookingId,
+          marathonDetail: "",
+        });
+      }
+    }
+
+    await prisma.purchasedTicket.createMany({
+      data: [...purchasedTicketObj],
+    });
+
+    const generatedTickets = await prisma.purchasedTicket.findMany({
+      where: {
+        bookingId: updateBooking.id,
+      },
+    });
+
+    // ** 3 Save to S3
+    const generateQR = async (text: any) => {
+      try {
+        return QRCode.toDataURL(text);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    for (const ticket of generatedTickets) {
+      const qrCode = await generateQR(JSON.stringify(ticket));
+      const base64Img = new (Buffer as any).from(
+        qrCode?.replace(/^data:image\/\w+;base64,/, ""),
+        "base64",
+      );
+      const type = qrCode!.split(";")[0].split("/")[1];
+      await uploadQRCodetoS3(ticket.id, base64Img, type);
+      await prisma.purchasedTicket.update({
+        where: {
+          id: ticket.id,
+        },
+        data: {
+          s3BarcodeKeyUrl:
+            `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
+        },
+      });
+    }
+
+    // ** 4  generate pdf to S3
+    await generatePdf(
+      updateBooking.id,
+      `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
+    );
+
+    await prisma.booking.update({
+      where: {
+        id: body.external_id,
+      },
+      data: {
+        invoicePdfUrl:
+          `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
+      },
+    });
+
+    const purchasedTickets = await prisma.purchasedTicket.findMany({
+      where: {
+        bookingId: updateBooking.id,
+      },
+      include: {
+        ticket: true,
+      },
+    });
+
+    // ** 6 Send Finish Payment Email
+    await sendEmail({
+      to: updateBooking.user.email,
+      subject: "Konfirmasi Pembayaran Gadjah Fest 2023",
+      bookingId: updateBooking.generatedBookingCode,
+      firstName: updateBooking.user.firstName,
+      attachmentLink:
+        `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
+      tickets: [...purchasedTickets],
     });
 
     return NextResponse.json({

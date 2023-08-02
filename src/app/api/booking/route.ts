@@ -1,8 +1,51 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { TicketAvailibilityType, TicketDetailsType } from "@/interfaces";
+import { render } from "@react-email/render";
+import nodemailer from "nodemailer";
+import BookingTemplate from "@/emails-utils/BookingTemplate";
+
 import axios from "axios";
 const prisma = new PrismaClient();
+
+interface EmailPayloatInterface {
+  to: string;
+  subject: string;
+  html?: string;
+  bookingId: string;
+  firstName: string;
+  bookingLink: string;
+}
+
+const sendEmail = async (data: EmailPayloatInterface) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.NODEMAILER_EMAIL,
+      pass: process.env.NODEMAILER_PW,
+    },
+  });
+
+  return await transporter.sendMail({
+    from: process.env.SMTP_FROM_EMAIL,
+    ...data,
+    html: render(
+      BookingTemplate({
+        firstName: data.firstName,
+        bookingId: data.bookingId,
+        bookingLink: data.bookingLink,
+      }),
+    ),
+    // attachments: [{
+    //   filename: "Document",
+    //   path: data.attachmentLink,
+    //   contentType: "application/pdf",
+    // }],
+  });
+};
 
 export async function GET(request: Request) {
   try {
@@ -10,6 +53,10 @@ export async function GET(request: Request) {
       select: {
         id: true,
         bookingStatus: true,
+        generatedBookingCode: true,
+        user: true,
+        payment: true,
+        bookingDetails: true,
         createdAt: true,
         updatedAt: true,
         _count: {
@@ -190,8 +237,8 @@ export async function POST(
         customer_notification_preference: {
           invoice_paid: ["email", "whatsapp"],
         },
-        success_redirect_url: "example.com/success",
-        failure_redirect_url: "example.com/failure",
+        success_redirect_url: `${process.env.PROJECT_HOST}`,
+        failure_redirect_url: `${process.env.PROJECT_HOST}`,
         items: booking.details.map((e) => {
           return {
             name: e.name,
@@ -200,16 +247,16 @@ export async function POST(
             price: e.price,
           };
         }),
-        fees: [
-          {
-            type: "Admin Fee",
-            value: (10 / 100) *
-              booking.details.map((e) => e.price * e.quantity).reduce(
-                (a, b) => a + b,
-                0,
-              ),
-          },
-        ],
+        // fees: [
+        //   {
+        //     type: "Admin Fee",
+        //     value: (10 / 100) *
+        //       booking.details.map((e) => e.price * e.quantity).reduce(
+        //         (a, b) => a + b,
+        //         0,
+        //       ),
+        //   },
+        // ],
       },
       {
         headers: {
@@ -235,6 +282,15 @@ export async function POST(
         paymentTime: xenditExpiryDate,
         xenditInvoiceUrl: xenditInvoiceUrl,
       },
+    });
+
+    // ** 6 Send Confirm Payment Email
+    await sendEmail({
+      to: booking.user.email,
+      subject: "Konfirmasi Pembayaran Gadjah Fest 2023",
+      bookingId: newBooking.generatedBookingCode,
+      firstName: booking.user.firstName,
+      bookingLink: xenditInvoiceUrl,
     });
 
     return NextResponse.json(
