@@ -155,6 +155,11 @@ export async function POST(
                   `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
               },
             });
+            NextResponse.json({
+              status: "uploading generated ticekt...",
+            }, {
+              status: 201,
+            });
 
             console.log("saved to db");
           } catch (e) {
