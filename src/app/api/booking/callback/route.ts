@@ -65,7 +65,7 @@ export async function POST(
   try {
     console.log("coming from callback");
     const body = await request.json();
-    // console.log(body);
+    console.log(body);
 
     if (body.status === "PAID") {
       try {
