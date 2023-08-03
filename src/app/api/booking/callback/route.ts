@@ -135,47 +135,27 @@ export async function POST(
 
         // ** 3 Save to S3
         for (const ticket of generatedTickets) {
-          console.log(`LOOP X`);
-          try {
-            const qrCode = await generateQR(JSON.stringify(ticket));
-            const base64Img = new (Buffer as any).from(
-              qrCode?.replace(/^data:image\/\w+;base64,/, ""),
-              "base64",
-            );
-            console.log("qr code generated");
-            const type = qrCode!.split(";")[0].split("/")[1];
-            await uploadQRCodetoS3(ticket.id, base64Img, type);
-            console.log("pass uploading to s3");
-            await prisma.purchasedTicket.update({
-              where: {
-                id: ticket.id,
-              },
-              data: {
-                s3BarcodeKeyUrl:
-                  `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
-              },
-            });
-            NextResponse.json({
-              status: "uploading generated ticekt...",
-            }, {
-              status: 201,
-            });
-
-            console.log("saved to db");
-          } catch (e) {
-            console.log(e);
-            if (e instanceof Error) {
-              return NextResponse.json({
-                status: "Failed",
-                message: "Failed in generating qr",
-                detail: {
-                  ...e,
-                },
-              }, {
-                status: 500,
-              });
-            }
-          }
+          const qrCode = await generateQR(JSON.stringify(ticket));
+          const base64Img = new (Buffer as any).from(
+            qrCode?.replace(/^data:image\/\w+;base64,/, ""),
+            "base64",
+          );
+          const type = qrCode!.split(";")[0].split("/")[1];
+          await uploadQRCodetoS3(ticket.id, base64Img, type);
+          await prisma.purchasedTicket.update({
+            where: {
+              id: ticket.id,
+            },
+            data: {
+              s3BarcodeKeyUrl:
+                `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
+            },
+          });
+          NextResponse.json({
+            status: "uploading generated ticekt...",
+          }, {
+            status: 201,
+          });
         }
 
         console.log("PASS 3");
@@ -217,6 +197,7 @@ export async function POST(
             `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
           tickets: [...purchasedTickets],
         });
+
         console.log("PASS 5");
 
         return NextResponse.json({
