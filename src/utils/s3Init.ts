@@ -20,14 +20,18 @@ export async function uploadPdftoS3(key: string, buffer: Buffer) {
 }
 
 export async function uploadQRCodetoS3(key: string, base64: any, type: string) {
-  console.log("saving qr to s3");
-  const s3Params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `${key}.${type}`,
-    Body: base64,
-    ContentEncoding: "base64",
-    ContentType: `image/${type}`,
-  };
+  try {
+    const s3Params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `${key}.${type}`,
+      Body: base64,
+      ContentEncoding: "base64",
+      ContentType: `image/${type}`,
+    };
 
-  return await s3Client.send(new PutObjectCommand(s3Params));
+    return await s3Client.send(new PutObjectCommand(s3Params));
+  } catch (er) {
+    console.log("error in s3 upload");
+    console.log(er);
+  }
 }
