@@ -146,20 +146,30 @@ export async function POST(
             const type = qrCode!.split(";")[0].split("/")[1];
             await uploadQRCodetoS3(ticket.id, base64Img, type);
             console.log("pass uploading to s3");
-            // const res = await prisma.purchasedTicket.update({
-            //   where: {
-            //     id: ticket.id,
-            //   },
-            //   data: {
-            //     s3BarcodeKeyUrl:
-            //       `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
-            //   },
-            // });
-            // console.log(res);
+            await prisma.purchasedTicket.update({
+              where: {
+                id: ticket.id,
+              },
+              data: {
+                s3BarcodeKeyUrl:
+                  `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
+              },
+            });
+
             console.log("saved to db");
           } catch (e) {
-            console.log("error occured in generating tickets");
             console.log(e);
+            if (e instanceof Error) {
+              return NextResponse.json({
+                status: "Failed",
+                message: "Failed in generating qr",
+                detail: {
+                  ...e,
+                },
+              }, {
+                status: 500,
+              });
+            }
           }
         }
 

@@ -34,7 +34,10 @@ export async function uploadQRCodetoS3(key: string, base64: any, type: string) {
     await s3Client.send(new PutObjectCommand(s3Params));
     console.log("pass in try");
   } catch (er) {
-    console.log("error in s3 upload");
-    console.log(er);
+    if (er instanceof Error) {
+      throw er;
+    }
+    // console.log("error in s3 upload");
+    // console.log(er);
   }
 }
