@@ -36,7 +36,9 @@ const CheckTicketModal: FC<ComponentProps> = ({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Log in</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">
+                Check Ticket
+              </ModalHeader>
               <ModalBody>
                 <Input
                   autoFocus
