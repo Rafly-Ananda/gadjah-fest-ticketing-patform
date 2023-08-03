@@ -13,6 +13,7 @@ import {
   bookingTicketPayload,
   MarathonDetailType,
 } from "@/interfaces";
+import BookingConfirmationModal from "@/components/bookingConfirmationModal";
 
 const supportedByImageLink = [
   "CoinFolks.png",
@@ -35,12 +36,22 @@ const supportedByImageLink = [
   "TN Way Kambas.png",
 ];
 
+interface BookingDetailsRespond {
+  invoiceUrl: string;
+  bookingCode: string;
+}
+
 export default function Home() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isOpenMarathon,
     onOpen: onOpenMarathon,
     onOpenChange: onOpenChangeMarathon,
+  } = useDisclosure();
+  const {
+    isOpen: bookingConfirmIsOpen,
+    onOpen: bookingConfirmOnOpen,
+    onOpenChange: bookingConfirmOnOpenChange,
   } = useDisclosure();
 
   const router = useRouter();
@@ -49,6 +60,10 @@ export default function Home() {
   const [marathonTicker, setMarathonTicket] = useState<Ticket[]>([]);
   const [isBooking, setIsBooking] = useState<boolean>(false);
   const [selectedMarathon, setSelectedMarathon] = useState<string>("");
+  const [bookingObj, setbookingObj] = useState<BookingDetailsRespond>({
+    bookingCode: "",
+    invoiceUrl: "",
+  });
 
   const [festivalTicketBooking, setFestivalTicketBooking] = useState({
     dayOnePass: {
@@ -185,26 +200,39 @@ export default function Home() {
   };
 
   const handleBooking = async () => {
-    setIsBooking(true);
-    let bookedTicket: bookingTicketPayload[] = [];
-    Object.entries(festivalTicketBooking).forEach((e) => {
-      if (e[1].quantity > 0) {
-        bookedTicket.push({ ticketId: e[1].id, quantity: e[1].quantity });
-      }
-    });
+    try {
+      setIsBooking(true);
+      let bookedTicket: bookingTicketPayload[] = [];
+      Object.entries(festivalTicketBooking).forEach((e) => {
+        if (e[1].quantity > 0) {
+          bookedTicket.push({ ticketId: e[1].id, quantity: e[1].quantity });
+        }
+      });
 
-    const bookingPayload = {
-      user: {
-        ...buyerData,
-      },
-      details: [...bookedTicket],
-    };
+      const bookingPayload = {
+        user: {
+          ...buyerData,
+        },
+        details: [...bookedTicket],
+      };
 
-    await axios.post(`${PROJECT_HOST}/api/booking`, bookingPayload);
+      const { data } = await axios.post(
+        `${PROJECT_HOST}/api/booking`,
+        bookingPayload
+      );
 
-    setIsBooking(false);
+      setbookingObj({
+        bookingCode: data.booking.generatedBookingCode,
+        invoiceUrl: data.booking.invoiceUrl,
+      });
+      bookingConfirmOnOpen();
 
-    return;
+      setIsBooking(false);
+
+      return;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleMarathonRegistartion = async () => {
@@ -217,9 +245,18 @@ export default function Home() {
       details: [{ ticketId: selectedMarathon, quantity: 1 }],
     };
 
-    await axios.post(`${PROJECT_HOST}/api/booking/marathon`, bookingPayload);
+    const { data } = await axios.post(
+      `${PROJECT_HOST}/api/booking/marathon`,
+      bookingPayload
+    );
+
+    setbookingObj({
+      bookingCode: data.booking.generatedBookingCode,
+      invoiceUrl: data.booking.invoiceUrl,
+    });
 
     setIsBooking(false);
+    return;
   };
 
   useEffect(() => {
@@ -243,6 +280,11 @@ export default function Home() {
         setMarathonDetail={setMarathonDetail}
         handleBooking={handleMarathonRegistartion}
         isBooking={isBooking}
+      />
+      <BookingConfirmationModal
+        isOpen={bookingConfirmIsOpen}
+        onOpenChange={bookingConfirmOnOpenChange}
+        bookingObj={bookingObj}
       />
       <div className="h-[700px] w-full relative brightness-50">
         <Image

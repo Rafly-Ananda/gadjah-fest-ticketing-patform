@@ -35,6 +35,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
+        isDismissable={false}
         scrollBehavior="inside"
       >
         <ModalContent>

@@ -108,34 +108,34 @@ export async function POST(
 
   try {
     // ** 1 Validate ticket availability
-    const bookedTicketsData = await prisma.bookingDetails.groupBy({
-      by: ["masterTicketId"],
-      _sum: {
-        quantity: true,
-      },
-      where: {
-        AND: [
-          { itemStatus: "PAID" },
-          { itemStatus: "PENDING" },
-        ],
-      },
-    }).then((res) => {
-      if (res.length === 0) {
-        return booking.details.map((e) => {
-          return {
-            masterTicketId: e.ticketId,
-            totalBooking: 0,
-          };
-        });
-      } else {
-        return res.map((e) => {
-          return {
-            masterTicketId: e.masterTicketId,
-            totalBooking: e._sum.quantity != null ? e._sum.quantity : 0,
-          };
-        });
-      }
-    });
+    // const bookedTicketsData = await prisma.bookingDetails.groupBy({
+    //   by: ["masterTicketId"],
+    //   _sum: {
+    //     quantity: true,
+    //   },
+    //   where: {
+    //     AND: [
+    //       { itemStatus: "PAID" },
+    //       { itemStatus: "PENDING" },
+    //     ],
+    //   },
+    // }).then((res) => {
+    //   if (res.length === 0) {
+    //     return booking.details.map((e) => {
+    //       return {
+    //         masterTicketId: e.ticketId,
+    //         totalBooking: 0,
+    //       };
+    //     });
+    //   } else {
+    //     return res.map((e) => {
+    //       return {
+    //         masterTicketId: e.masterTicketId,
+    //         totalBooking: e._sum.quantity != null ? e._sum.quantity : 0,
+    //       };
+    //     });
+    //   }
+    // });
 
     const masterTicketsData = await prisma.ticket.findMany({
       where: {
@@ -145,38 +145,38 @@ export async function POST(
       },
     });
 
-    for (let i = 0; i < bookedTicketsData.length; i++) {
-      const masterTicket = masterTicketsData.find((e) =>
-        e.id === bookedTicketsData[i].masterTicketId
-      );
-      const userTicketBookingQty = booking.details.find((e) =>
-        e.ticketId === bookedTicketsData[i].masterTicketId
-      );
+    // for (let i = 0; i < bookedTicketsData.length; i++) {
+    //   const masterTicket = masterTicketsData.find((e) =>
+    //     e.id === bookedTicketsData[i].masterTicketId
+    //   );
+    //   const userTicketBookingQty = booking.details.find((e) =>
+    //     e.ticketId === bookedTicketsData[i].masterTicketId
+    //   );
 
-      if (
-        bookedTicketsData[i].totalBooking + userTicketBookingQty!.quantity >
-          masterTicket!.quantity || masterTicket!.quantity === 0
-      ) {
-        availabilityReturnObj.push({
-          ticketId: masterTicket!.id,
-          available: false,
-        });
-        validToBook = false;
-      } else {
-        availabilityReturnObj.push({
-          ticketId: masterTicket!.id,
-          available: true,
-        });
-      }
-    }
+    //   if (
+    //     bookedTicketsData[i].totalBooking + userTicketBookingQty!.quantity >
+    //       masterTicket!.quantity || masterTicket!.quantity === 0
+    //   ) {
+    //     availabilityReturnObj.push({
+    //       ticketId: masterTicket!.id,
+    //       available: false,
+    //     });
+    //     validToBook = false;
+    //   } else {
+    //     availabilityReturnObj.push({
+    //       ticketId: masterTicket!.id,
+    //       available: true,
+    //     });
+    //   }
+    // }
 
-    if (!validToBook) {
-      return NextResponse.json({
-        status: "Failed to Book",
-        message: "Limit to some ticket reached",
-        data: availabilityReturnObj,
-      }, { status: 200 });
-    }
+    // if (!validToBook) {
+    //   return NextResponse.json({
+    //     status: "Failed to Book",
+    //     message: "Limit to some ticket reached",
+    //     data: availabilityReturnObj,
+    //   }, { status: 200 });
+    // }
 
     // ** 2 Create Booking
     booking.details = booking.details.map((e) => {
