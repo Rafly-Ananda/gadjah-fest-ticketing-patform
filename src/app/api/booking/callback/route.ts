@@ -148,7 +148,7 @@ export async function POST(
             const type = qrCode!.split(";")[0].split("/")[1];
             await uploadQRCodetoS3(ticket.id, base64Img, type);
             console.log("pass uploading to s3");
-            await prisma.purchasedTicket.update({
+            const res = await prisma.purchasedTicket.update({
               where: {
                 id: ticket.id,
               },
@@ -157,6 +157,7 @@ export async function POST(
                   `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
               },
             });
+            console.log(res);
             console.log("saved to db");
           } catch (e) {
             console.log("error occured in generating tickets");
