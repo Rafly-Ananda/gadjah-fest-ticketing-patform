@@ -20,6 +20,7 @@ export async function uploadPdftoS3(key: string, buffer: Buffer) {
 }
 
 export async function uploadQRCodetoS3(key: string, base64: any, type: string) {
+  console.log("saving qr to s3");
   const s3Params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: `${key}.${type}`,

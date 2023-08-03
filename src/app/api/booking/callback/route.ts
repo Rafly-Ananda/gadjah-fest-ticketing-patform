@@ -51,6 +51,14 @@ const sendEmail = async (data: EmailPayloatInterface) => {
   });
 };
 
+const generateQR = async (text: any) => {
+  try {
+    return QRCode.toDataURL(text);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export async function POST(
   request: Request,
 ) {
@@ -125,16 +133,11 @@ export async function POST(
 
         console.log("PASS 2");
 
-        // ** 3 Save to S3
-        const generateQR = async (text: any) => {
-          try {
-            return QRCode.toDataURL(text);
-          } catch (err) {
-            console.error(err);
-          }
-        };
+        console.log(generatedTickets);
 
+        // ** 3 Save to S3
         for (const ticket of generatedTickets) {
+          console.log(`LOOP X`);
           try {
             const qrCode = await generateQR(JSON.stringify(ticket));
             const base64Img = new (Buffer as any).from(
