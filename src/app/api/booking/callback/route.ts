@@ -8,6 +8,8 @@ import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import PaidBookingTemplate from "@/emails-utils/paidBookingTemplate";
 import { user } from "@nextui-org/react";
+import { Browser, BrowserContext, chromium, Page } from "playwright";
+import { uploadPdftoS3 } from "@/utils/s3Init";
 
 const prisma = new PrismaClient();
 
@@ -165,10 +167,17 @@ export async function POST(
         //   `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
         // );
 
-        await generatePdf(
-          "aya",
-          `/invoice/T85SS9CY78`,
+        let browser = await chromium.launch();
+        let context = await browser.newContext();
+        let page = await context.newPage();
+        await page.goto(
+          `${process.env.PROJECT_HOST}/invoice/T85SS9CY78`,
+          {
+            waitUntil: "networkidle",
+          },
         );
+        const buffer = await page.pdf({ format: "a4" });
+        await uploadPdftoS3("aya", buffer);
 
         // NextResponse.json({
         //   status: "generating pdf to s3...",
