@@ -63,7 +63,6 @@ export async function POST(
   request: Request,
 ) {
   try {
-    console.log("coming from callback");
     const body = await request.json();
     console.log(body);
 
@@ -152,7 +151,7 @@ export async function POST(
             },
           });
           NextResponse.json({
-            status: "uploading generated ticekt...",
+            status: "uploading generated ticket to s3...",
           }, {
             status: 201,
           });
@@ -166,6 +165,12 @@ export async function POST(
           `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
         );
 
+        NextResponse.json({
+          status: "generating pdf to s3...",
+        }, {
+          status: 201,
+        });
+
         await prisma.booking.update({
           where: {
             id: body.external_id,
@@ -176,6 +181,16 @@ export async function POST(
           },
         });
 
+        NextResponse.json({
+          status: "saving pdf to db...",
+        }, {
+          status: 201,
+        });
+
+        console.log("PASS 4");
+
+        // ** 5 Send Finish Payment Email
+
         const purchasedTickets = await prisma.purchasedTicket.findMany({
           where: {
             bookingId: updateBooking.id,
@@ -185,9 +200,12 @@ export async function POST(
           },
         });
 
-        console.log("PASS 4");
+        NextResponse.json({
+          status: "finding records on db...",
+        }, {
+          status: 201,
+        });
 
-        // ** 5 Send Finish Payment Email
         await sendEmail({
           to: updateBooking.user.email,
           subject: "Konfirmasi Pembayaran Gadjah Fest 2023",
