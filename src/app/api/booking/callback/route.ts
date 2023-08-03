@@ -57,7 +57,7 @@ export async function POST(
   try {
     console.log("coming from callback");
     const body = await request.json();
-    console.log(body);
+    // console.log(body);
 
     if (body.status === "PAID") {
       try {
@@ -98,6 +98,7 @@ export async function POST(
             user: true,
           },
         });
+        console.log("PASS 1");
 
         // ** 2 Generate ticket for QR
         let purchasedTicketObj = [];
@@ -121,6 +122,8 @@ export async function POST(
             bookingId: updateBooking.id,
           },
         });
+
+        console.log("PASS 2");
 
         // ** 3 Save to S3
         const generateQR = async (text: any) => {
@@ -150,6 +153,8 @@ export async function POST(
           });
         }
 
+        console.log("PASS 3");
+
         // ** 4  generate pdf to S3
         await generatePdf(
           updateBooking.id,
@@ -175,7 +180,9 @@ export async function POST(
           },
         });
 
-        // ** 6 Send Finish Payment Email
+        console.log("PASS 4");
+
+        // ** 5 Send Finish Payment Email
         await sendEmail({
           to: updateBooking.user.email,
           subject: "Konfirmasi Pembayaran Gadjah Fest 2023",
@@ -185,6 +192,7 @@ export async function POST(
             `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
           tickets: [...purchasedTickets],
         });
+        console.log("PASS 5");
 
         return NextResponse.json({
           status: "Success",
