@@ -152,7 +152,7 @@ export default function Home() {
       details: [...bookedTicket],
     };
 
-    const booking = await axios.post(`${PROJECT_HOST}`, bookingPayload);
+    const booking = await axios.post(`${PROJECT_HOST}/api/booking`, bookingPayload);
 
     setIsBooking(false);
 
