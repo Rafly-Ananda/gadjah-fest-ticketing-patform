@@ -167,17 +167,21 @@ export async function POST(
         //   `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
         // );
 
-        let browser = await chromium.launch();
+        let browser = await chromium.launch({ headless: true });
         let context = await browser.newContext();
         let page = await context.newPage();
+        console.log(`${process.env.PROJECT_HOST}/invoice/T85SS9CY78`);
         await page.goto(
           `${process.env.PROJECT_HOST}/invoice/T85SS9CY78`,
           {
             waitUntil: "networkidle",
           },
         );
+        console.log("a");
         const buffer = await page.pdf({ format: "a4" });
+        console.log("b");
         await uploadPdftoS3("aya", buffer);
+        console.log("c");
 
         // NextResponse.json({
         //   status: "generating pdf to s3...",
