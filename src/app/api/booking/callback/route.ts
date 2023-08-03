@@ -7,9 +7,6 @@ import QRCode from "qrcode";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import PaidBookingTemplate from "@/emails-utils/paidBookingTemplate";
-import { user } from "@nextui-org/react";
-import { Browser, BrowserContext, chromium, Page } from "playwright";
-import { uploadPdftoS3 } from "@/utils/s3Init";
 
 const prisma = new PrismaClient();
 
@@ -70,118 +67,104 @@ export async function POST(
 
     if (body.status === "PAID") {
       try {
-        // // ** 1 Update booking status
-        // const updateBooking = await prisma.booking.update({
-        //   where: {
-        //     id: body.external_id,
-        //   },
-        //   data: {
-        //     bookingStatus: "PAID",
-        //     payment: {
-        //       update: {
-        //         where: {
-        //           bookingId: body.external_id,
-        //         },
-        //         data: {
-        //           status: "PAID",
-        //         },
-        //       },
-        //     },
-        //     bookingDetails: {
-        //       updateMany: {
-        //         where: {
-        //           bookingId: body.external_id,
-        //         },
-        //         data: {
-        //           itemStatus: "PAID",
-        //         },
-        //       },
-        //     },
-        //   },
-        //   include: {
-        //     bookingDetails: {
-        //       where: {
-        //         bookingId: body.external_id,
-        //       },
-        //     },
-        //     user: true,
-        //   },
-        // });
-        // console.log("PASS 1");
+        // ** 1 Update booking status
+        const updateBooking = await prisma.booking.update({
+          where: {
+            id: body.external_id,
+          },
+          data: {
+            bookingStatus: "PAID",
+            payment: {
+              update: {
+                where: {
+                  bookingId: body.external_id,
+                },
+                data: {
+                  status: "PAID",
+                },
+              },
+            },
+            bookingDetails: {
+              updateMany: {
+                where: {
+                  bookingId: body.external_id,
+                },
+                data: {
+                  itemStatus: "PAID",
+                },
+              },
+            },
+          },
+          include: {
+            bookingDetails: {
+              where: {
+                bookingId: body.external_id,
+              },
+            },
+            user: true,
+          },
+        });
+        console.log("PASS 1");
 
-        // // ** 2 Generate ticket for QR
-        // let purchasedTicketObj = [];
-        // for (let i = 0; i < updateBooking.bookingDetails.length; i++) {
-        //   for (let j = 0; j < updateBooking.bookingDetails[i].quantity; j++) {
-        //     purchasedTicketObj.push({
-        //       masterTicketId: updateBooking.bookingDetails[i].masterTicketId,
-        //       ticketStatus: "VALID" as TicketStatus,
-        //       bookingId: updateBooking.bookingDetails[i].bookingId,
-        //       marathonDetail: "",
-        //     });
-        //   }
-        // }
+        // ** 2 Generate ticket for QR
+        let purchasedTicketObj = [];
+        for (let i = 0; i < updateBooking.bookingDetails.length; i++) {
+          for (let j = 0; j < updateBooking.bookingDetails[i].quantity; j++) {
+            purchasedTicketObj.push({
+              masterTicketId: updateBooking.bookingDetails[i].masterTicketId,
+              ticketStatus: "VALID" as TicketStatus,
+              bookingId: updateBooking.bookingDetails[i].bookingId,
+              marathonDetail: body.marathonDetail !== null
+                ? body.marathonDetail
+                : "",
+            });
+          }
+        }
 
-        // await prisma.purchasedTicket.createMany({
-        //   data: [...purchasedTicketObj],
-        // });
+        await prisma.purchasedTicket.createMany({
+          data: [...purchasedTicketObj],
+        });
 
-        // const generatedTickets = await prisma.purchasedTicket.findMany({
-        //   where: {
-        //     bookingId: updateBooking.id,
-        //   },
-        // });
+        const generatedTickets = await prisma.purchasedTicket.findMany({
+          where: {
+            bookingId: updateBooking.id,
+          },
+        });
 
-        // console.log("PASS 2");
+        console.log("PASS 2");
 
-        // // ** 3 Save to S3
-        // for (const ticket of generatedTickets) {
-        //   const qrCode = await generateQR(JSON.stringify(ticket));
-        //   const base64Img = new (Buffer as any).from(
-        //     qrCode?.replace(/^data:image\/\w+;base64,/, ""),
-        //     "base64",
-        //   );
-        //   const type = qrCode!.split(";")[0].split("/")[1];
-        //   await uploadQRCodetoS3(ticket.id, base64Img, type);
-        //   await prisma.purchasedTicket.update({
-        //     where: {
-        //       id: ticket.id,
-        //     },
-        //     data: {
-        //       s3BarcodeKeyUrl:
-        //         `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
-        //     },
-        //   });
-        //   NextResponse.json({
-        //     status: "uploading generated ticket to s3...",
-        //   }, {
-        //     status: 201,
-        //   });
-        // }
+        // ** 3 Save to S3
+        for (const ticket of generatedTickets) {
+          const qrCode = await generateQR(JSON.stringify(ticket));
+          const base64Img = new (Buffer as any).from(
+            qrCode?.replace(/^data:image\/\w+;base64,/, ""),
+            "base64",
+          );
+          const type = qrCode!.split(";")[0].split("/")[1];
+          await uploadQRCodetoS3(ticket.id, base64Img, type);
+          await prisma.purchasedTicket.update({
+            where: {
+              id: ticket.id,
+            },
+            data: {
+              s3BarcodeKeyUrl:
+                `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${ticket.id}.${type}`,
+            },
+          });
+          NextResponse.json({
+            status: "uploading generated ticket to s3...",
+          }, {
+            status: 201,
+          });
+        }
 
-        // console.log("PASS 3");
+        console.log("PASS 3");
 
-        // // ** 4  generate pdf to S3
+        // ** 4  generate pdf to S3
         // await generatePdf(
         //   updateBooking.id,
         //   `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
         // );
-
-        let browser = await chromium.launch({ headless: true });
-        let context = await browser.newContext();
-        let page = await context.newPage();
-        console.log(`${process.env.PROJECT_HOST}/invoice/T85SS9CY78`);
-        await page.goto(
-          `${process.env.PROJECT_HOST}/invoice/T85SS9CY78`,
-          {
-            waitUntil: "networkidle",
-          },
-        );
-        console.log("a");
-        const buffer = await page.pdf({ format: "a4" });
-        console.log("b");
-        await uploadPdftoS3("aya", buffer);
-        console.log("c");
 
         // NextResponse.json({
         //   status: "generating pdf to s3...",
@@ -207,45 +190,46 @@ export async function POST(
 
         // console.log("PASS 4");
 
-        // // ** 5 Send Finish Payment Email
+        // ** 5 Send Finish Payment Email
 
-        // const purchasedTickets = await prisma.purchasedTicket.findMany({
-        //   where: {
-        //     bookingId: updateBooking.id,
-        //   },
-        //   include: {
-        //     ticket: true,
-        //   },
-        // });
+        const purchasedTickets = await prisma.purchasedTicket.findMany({
+          where: {
+            bookingId: updateBooking.id,
+          },
+          include: {
+            ticket: true,
+          },
+        });
 
-        // NextResponse.json({
-        //   status: "finding records on db...",
-        // }, {
-        //   status: 201,
-        // });
+        NextResponse.json({
+          status: "finding records on db ...",
+        }, {
+          status: 201,
+        });
 
-        // await sendEmail({
-        //   to: updateBooking.user.email,
-        //   subject: "Konfirmasi Pembayaran Gadjah Fest 2023",
-        //   bookingId: updateBooking.generatedBookingCode,
-        //   firstName: updateBooking.user.firstName,
-        //   attachmentLink:
-        //     `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
-        //   tickets: [...purchasedTickets],
-        // });
+        await sendEmail({
+          to: updateBooking.user.email,
+          subject: "Konfirmasi Pemesanan Gadjah Fest 2023",
+          bookingId: updateBooking.generatedBookingCode,
+          firstName: updateBooking.user.firstName,
+          // attachmentLink:
+          //   `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
+          attachmentLink: "",
+          tickets: [...purchasedTickets],
+        });
 
-        // console.log("PASS 5");
+        console.log("PASS 5");
 
         return NextResponse.json({
           status: "Success",
           message: "Payment received",
-          // detail: {
-          //   id: updateBooking.id,
-          //   bookingId: updateBooking.generatedBookingCode,
-          //   userId: updateBooking.userId,
-          //   createdAt: updateBooking.createdAt,
-          //   updatedAt: updateBooking.updatedAt,
-          // },
+          detail: {
+            id: updateBooking.id,
+            bookingId: updateBooking.generatedBookingCode,
+            userId: updateBooking.userId,
+            createdAt: updateBooking.createdAt,
+            updatedAt: updateBooking.updatedAt,
+          },
         }, {
           status: 200,
         });

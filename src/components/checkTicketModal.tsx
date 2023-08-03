@@ -13,7 +13,7 @@ import {
 interface ComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
-  navigateToTicketDetails: () => void;
+  navigateToTicketDetails: (cb: any) => void;
   bookingCode: string;
   setBookingCode: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -53,8 +53,7 @@ const CheckTicketModal: FC<ComponentProps> = ({
                 <Button
                   color="primary"
                   onPress={async () => {
-                    onClose();
-                    navigateToTicketDetails();
+                    navigateToTicketDetails(onClose);
                   }}
                 >
                   Cek

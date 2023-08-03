@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { menus } from "@/statics/statics";
 import CheckTicketModal from "./checkTicketModal";
@@ -12,12 +12,15 @@ const Navbar: FC<any> = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const navigateToTicketDetails = async () => {
+  const navigateToTicketDetails = async (cb: any) => {
     router.push(`/invoice/${bookingCode}`);
+    setTimeout(() => {
+      cb();
+    }, 500);
   };
 
   return (
-    <nav className="hidden md:flex flex-col items-center justify-between bg-[#0a6c72] p-4">
+    <nav className="fixed flex flex-col items-center justify-between transparent p-4 z-10 w-full">
       <CheckTicketModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -37,13 +40,13 @@ const Navbar: FC<any> = () => {
             className="h-auto w-[100px]"
           />
           <ul className="flex flex-row items-center justify-center gap-14 ">
-            {menus.map((e: any, i: number) => (
+            {menus.map((e, i: number) => (
               <a
                 key={i}
-                href=""
+                href={e.href}
                 className="group relative font-medium text-white no-underline"
               >
-                {e}
+                {e.name}
                 <span className="absolute bottom-0 left-0 h-[3px] w-full scale-x-0 transform bg-[#fdcf00] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
               </a>
             ))}

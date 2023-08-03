@@ -29,7 +29,6 @@
     "next": "13.4.12",
     "nodemailer": "^6.9.4",
     "playwright": "^1.36.2",
-    "playwright-aws-lambda": "^0.10.0",
     "postcss": "8.4.27",
     "qrcode": "^1.5.3",
     "react": "18.2.0",

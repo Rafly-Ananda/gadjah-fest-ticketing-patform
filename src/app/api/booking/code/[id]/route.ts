@@ -13,6 +13,7 @@ export async function GET(
       },
       select: {
         generatedBookingCode: true,
+        bookingStatus: true,
         purchasedTickets: {
           include: {
             ticket: {
@@ -44,7 +45,8 @@ export async function GET(
         status: "Success",
         message: "Booking not found",
         bookingId: params.id,
-      }, { status: 404 });
+        booking: [],
+      }, { status: 200 });
     }
   } catch (e) {
     if (e instanceof Error) {

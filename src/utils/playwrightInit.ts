@@ -19,9 +19,6 @@ export async function generatePdf(bookingId: string, url: string) {
     await init();
   }
 
-  console.log("coming from generate-pdf");
-  console.log(url);
-
   await page.goto(
     url,
     {

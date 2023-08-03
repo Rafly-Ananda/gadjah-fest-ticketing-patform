@@ -7,18 +7,48 @@ import { Ticket } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { Button, useDisclosure } from "@nextui-org/react";
 import CheckoutModal from "@/components/checkoutModal";
-import { buyerDataType, bookingTicketPayload } from "@/interfaces";
+import MarathonRegistrationModal from "@/components/marthonRegistrationModal";
+import {
+  buyerDataType,
+  bookingTicketPayload,
+  MarathonDetailType,
+} from "@/interfaces";
+
+const supportedByImageLink = [
+  "CoinFolks.png",
+  "DREZZO LOGO_CLEAR BACKGROUND.png",
+  "Gadjah Society Purple.png",
+  "IEI.png",
+  "Imah arch.jpg",
+  "Koperasi PNG.png",
+  "KTH Bina Warga.png",
+  "KTH Rahayu Jaya_PLVII.jpg",
+  "Liman Wana Asri_LRVI.png",
+  "Logo FKGI_Vector Remake-03.png",
+  "LOGO KUYOUID FONT REV2.png",
+  "LOGO MAJA LABS_.png",
+  "Logo_Pesona_Indonesia_(Kementerian_Pariwisata).png",
+  "NOAH.png",
+  "OXLABS.png",
+  "POKDARWIS.jpg",
+  "Solar Generation.png",
+  "TN Way Kambas.png",
+];
 
 export default function Home() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isOpenMarathon,
+    onOpen: onOpenMarathon,
+    onOpenChange: onOpenChangeMarathon,
+  } = useDisclosure();
+
   const router = useRouter();
   const [content, setContent] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
   const [festivalTicket, setFestivalTicket] = useState<Ticket[]>([]);
   const [marathonTicker, setMarathonTicket] = useState<Ticket[]>([]);
-  const [supportedBy, setSupportedBy] = useState([
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-  ]);
   const [isBooking, setIsBooking] = useState<boolean>(false);
+  const [selectedMarathon, setSelectedMarathon] = useState<string>("");
 
   const [festivalTicketBooking, setFestivalTicketBooking] = useState({
     dayOnePass: {
@@ -40,6 +70,24 @@ export default function Home() {
     firstName: "",
     lastName: "",
     mobileNumber: "",
+  });
+
+  const [marathonDetail, setMarathonDetail] = useState<MarathonDetailType>({
+    user: {
+      email: "",
+      firstName: "",
+      lastName: "",
+      mobileNumber: "",
+      gender: "",
+      marathonSkill: "",
+    },
+    contactInformation: {
+      email: "",
+      firstName: "",
+      lastName: "",
+      mobileNumber: "",
+    },
+    additionalInformation: "",
   });
 
   const addBookingQuantity = async (ticket: Ticket) => {
@@ -152,13 +200,26 @@ export default function Home() {
       details: [...bookedTicket],
     };
 
-    const booking = await axios.post(`${PROJECT_HOST}/api/booking`, bookingPayload);
+    await axios.post(`${PROJECT_HOST}/api/booking`, bookingPayload);
 
     setIsBooking(false);
 
-    console.log(booking);
-
     return;
+  };
+
+  const handleMarathonRegistartion = async () => {
+    setIsBooking(true);
+
+    const bookingPayload = {
+      user: {
+        ...marathonDetail,
+      },
+      details: [{ ticketId: selectedMarathon, quantity: 1 }],
+    };
+
+    await axios.post(`${PROJECT_HOST}/api/booking/marathon`, bookingPayload);
+
+    setIsBooking(false);
   };
 
   useEffect(() => {
@@ -175,10 +236,28 @@ export default function Home() {
         handleBooking={handleBooking}
         isBooking={isBooking}
       />
-      <div className="h-[400px]">{/* gambar kesini */}</div>
-      <div className="bg-[#0a6c72] flex flex-col items-center justify-center gap-8 w-full">
+      <MarathonRegistrationModal
+        isOpen={isOpenMarathon}
+        onOpenChange={onOpenChangeMarathon}
+        marathonDetail={marathonDetail}
+        setMarathonDetail={setMarathonDetail}
+        handleBooking={handleMarathonRegistartion}
+        isBooking={isBooking}
+      />
+      <div className="h-[700px] w-full relative brightness-50">
+        <Image
+          src="/marathon-indonesia.jpg"
+          alt="logo"
+          fill={true}
+          sizes="100vw"
+          priority={true}
+        />
+      </div>
+      <div className="relative bg-[#0a6c72] flex flex-col items-center justify-center gap-8 w-full pt-10">
         <div className="flex flex-col items-center justify-center gap-4 w-2/4 text-white">
-          <h1 className="text-2xl font-semibold">#HidupBerdampingan</h1>
+          <h1 className="absolute text-4xl font-medium -top-6">
+            #HidupBerdampingan
+          </h1>
           <p className="text-center font-medium">
             Semangat kemenangan ada di depan mata, gelora persatuan turut
             menyuarakan asa. Kini saatnya kita kembali, bersama-sama memupuk
@@ -297,12 +376,21 @@ export default function Home() {
                     </p>
 
                     <div className="flex w-full items-center justify-center gap-2">
-                      <button
+                      {/* <button
                         className="bg-[#ffffff] text-[#0a6c72] rounded-lg px-2 border border-[#0a6c72] flex items-center justify-center text-xs"
                         onClick={() => router.push(`/marathon/${e.id}`)}
                       >
                         Registrasi
-                      </button>
+                      </button> */}
+                      <Button
+                        onPress={() => {
+                          onOpenMarathon();
+                          setSelectedMarathon(e.id);
+                        }}
+                        className="bg-[#ffffff] text-[#0a6c72] rounded-lg px-2 border border-[#0a6c72] flex items-center justify-center text-xs"
+                      >
+                        Registrasi
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -333,10 +421,23 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center mt-8 gap-8">
         <h1 className="text-lg font-medium">Supported By</h1>
         <div className="flex flex-wrap items-center justify-center gap-8 w-2/4 text-[#0a6c72]">
-          {supportedBy &&
-            supportedBy.map((e, i) => (
-              <div key={i} className="bg-[#d9d9d9] h-[120px] w-[120px]"></div>
-            ))}
+          {supportedByImageLink.map((e, i) => (
+            <div
+              className="flex items-center justify-center w-[130px] h-[130px] bg-[#f0c01b] rounded-md"
+              key={i}
+            >
+              <Image
+                key={i}
+                src={`/${e}`}
+                alt="logo"
+                width="0"
+                height="0"
+                sizes="100vw"
+                priority={true}
+                className="block max-h-[120px] max-w-[120px] w-auto h-auto "
+              />
+            </div>
+          ))}
         </div>
       </div>
 

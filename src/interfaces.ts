@@ -32,3 +32,26 @@ export interface bookingTicketPayload {
   ticketId: string;
   quantity: number;
 }
+
+export interface navbarInteface {
+  name: string;
+  href: string;
+}
+
+export interface MarathonDetailType {
+  user: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    mobileNumber: string;
+    gender: string;
+    marathonSkill: string;
+  };
+  contactInformation: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    mobileNumber: string;
+  };
+  additionalInformation: string;
+}
