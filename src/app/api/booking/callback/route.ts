@@ -200,6 +200,7 @@ export async function POST(
           status: 200,
         });
       } catch (e) {
+        console.log(e);
         if (e instanceof Error) {
           return NextResponse.json({
             status: "Failed",
@@ -267,6 +268,7 @@ export async function POST(
       });
     }
   } catch (e) {
+    console.log(e);
     if (e instanceof Error) {
       return NextResponse.json({
         status: "Error",
