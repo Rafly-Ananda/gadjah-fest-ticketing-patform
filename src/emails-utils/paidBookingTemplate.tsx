@@ -35,7 +35,7 @@ export const PaidBookingTemplate = ({
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
             <Section className="mt-[32px]">
               <Img
-                src="https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/logo.png"
+                src="https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/logo-alternate.png"
                 width="40"
                 height="37"
                 alt="Vercel"
