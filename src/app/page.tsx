@@ -407,7 +407,7 @@ export default function Home() {
               12 - 13 Agustus 2023
             </h1>
             <h1 className="text-white font-bold md:text-4xl text-base">
-              Jl. Dugul, Lampung Timur
+              Jln. Dugul, Lampung Timur
             </h1>
           </div>
 
@@ -679,13 +679,14 @@ export default function Home() {
           <h1 className="md:text-2xl font-semibold">
             Lampung = Little Indonesia
           </h1>
-          <a href="https://www.google.com/maps/place/Gadjah+Fest/@-5.182838,105.78751,15z/data=!4m2!3m1!1s0x0:0xcfd1f46ae0bb31ec?sa=X&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhDEAA&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhNEAM">
-            <Map />
-          </a>
 
-          <p className="text-sm font-semibold">
-            Lokasi: Jln Dugul, Desa Braja Harjosari, Lampung Timur
-          </p>
+          <Map />
+
+          <a href="https://www.google.com/maps/place/Gadjah+Fest/@-5.182838,105.78751,15z/data=!4m2!3m1!1s0x0:0xcfd1f46ae0bb31ec?sa=X&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhDEAA&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhNEAM">
+            <p className="text-sm font-semibold">
+              Lokasi: Jln Dugul, Desa Braja Harjosari, Lampung Timur
+            </p>
+          </a>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 w-full md:w-2/4 text-[#0a6c72] md:pr-24 md:pt-24">
