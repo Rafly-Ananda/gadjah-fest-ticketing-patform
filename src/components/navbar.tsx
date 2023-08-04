@@ -27,12 +27,12 @@ const Navbar: FC<any> = () => {
     const observer = new IntersectionObserver((e) => {
       setIstersecting(e[0].isIntersecting);
     });
-
-    if (document.getElementById("hero")) {
-      observer.observe(document.getElementById("hero"));
-    }
-
+    observer.observe(document.getElementById("hero")!);
     setIsNavOpen(false);
+
+    return () => {
+      observer.unobserve(document.getElementById("hero")!);
+    };
   }, [pathname]);
 
   return (
