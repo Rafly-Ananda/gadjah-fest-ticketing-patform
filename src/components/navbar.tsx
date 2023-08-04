@@ -27,19 +27,24 @@ const Navbar: FC<any> = () => {
     const observer = new IntersectionObserver((e) => {
       setIstersecting(e[0].isIntersecting);
     });
-    observer.observe(document.getElementById("hero")!);
+
+    if (document.getElementById("hero")) {
+      observer.observe(document.getElementById("hero")!);
+    }
     setIsNavOpen(false);
 
-    return () => {
-      observer.unobserve(document.getElementById("hero")!);
-    };
+    // return () => {
+    //   observer.unobserve(document.getElementById("hero")!);
+    // };
   }, [pathname]);
 
   return (
     <nav
       className={`fixed flex flex-col items-center justify-between ${
-        isIntersecting ? "bg-transparent" : "bg-[#0a6c72]"
-      }  p-4 z-10 w-full`}
+        isIntersecting
+          ? "bg-transparent"
+          : "bg-gradient-to-b from-[#0a6c72] to-transparent"
+      }  md:p-4 px-7 py-4 z-10 w-full`}
     >
       <CheckTicketModal
         isOpen={isOpen}
@@ -49,7 +54,7 @@ const Navbar: FC<any> = () => {
         navigateToTicketDetails={navigateToTicketDetails}
       />
       <div className="flex md:w-3/4 w-full items-center justify-between ">
-        <div className="flex items-center justify-center  gap-8">
+        <div className="flex items-center justify-center gap-8">
           <Image
             src="/logo.png"
             alt="logo"

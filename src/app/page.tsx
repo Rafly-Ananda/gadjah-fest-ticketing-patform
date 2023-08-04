@@ -37,6 +37,18 @@ const supportedByImageLink = [
   "TN Way Kambas.png",
 ];
 
+const tBanner = [
+  "tbanner1.png",
+  "tbanner2.png",
+  "tbanner3.png",
+  "tbanner4.png",
+  "tbanner5.png",
+  "tbanner6.png",
+  "tbanner7.png",
+  "tbanner8.png",
+  "tbanner9.png",
+];
+
 interface BookingDetailsRespond {
   invoiceUrl: string;
   bookingCode: string;
@@ -55,8 +67,6 @@ export default function Home() {
     onOpenChange: bookingConfirmOnOpenChange,
   } = useDisclosure();
 
-  const router = useRouter();
-  const [content, setContent] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
   const [festivalTicket, setFestivalTicket] = useState<Ticket[]>([]);
   const [marathonTicker, setMarathonTicket] = useState<Ticket[]>([]);
   const [isBooking, setIsBooking] = useState<boolean>(false);
@@ -266,7 +276,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col items-center justify-center">
+    <main className="flex flex-col items-center justify-center relative">
       <CheckoutModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -288,20 +298,38 @@ export default function Home() {
         onOpenChange={bookingConfirmOnOpenChange}
         bookingObj={bookingObj}
       />
-      <div className="h-[700px] w-full relative brightness-50" id="hero">
-        <Image
-          src="/marathon-indonesia.jpg"
-          alt="logo"
-          fill={true}
-          sizes="100vw"
-          priority={true}
-        />
+      <div className="absolute inset-0">
+        <div className="md:h-[700px] h-[300px] w-full relative" id="hero">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center md:pb-14 pb-10">
+            <h1 className=" text-white font-bold md:text-4xl text-base">
+              12 - 13 Agustus 2023
+            </h1>
+            <h1 className="text-white font-bold md:text-4xl text-base">
+              Jl. Dugul, Lampung Timur
+            </h1>
+          </div>
+
+          <Image
+            src="/hero-2.png"
+            alt="logo"
+            fill={true}
+            sizes="100vw"
+            priority={true}
+          />
+        </div>
       </div>
-      <div className="relative bg-[#0a6c72] flex flex-col items-center justify-center gap-8 w-full pt-10">
+
+      <div className="relative bg-[#0a6c72] flex flex-col items-center justify-center gap-8 w-full md:pt-10 px-5 md:px-0 md:mt-[620px] mt-[300px]">
         <div className="flex flex-col items-center justify-center gap-4 md:w-2/4 w-full text-white">
-          <h1 className="absolute md:text-4xl font-medium md:-top-6 -top-5 text-2xl">
-            #HidupBerdampingan
-          </h1>
+          <Image
+            src="/hidup-berdampingan.png"
+            alt="logo"
+            width="0"
+            height="0"
+            sizes="100vw"
+            priority={true}
+            className="block absolute md:-top-14 -top-16 md:h-[70px] md:w-[250px] h-[50px] w-[200px] rounded-md mb-5"
+          />
           <p className="text-center font-medium text-sm md:text-base">
             Semangat kemenangan ada di depan mata, gelora persatuan turut
             menyuarakan asa. Kini saatnya kita kembali, bersama-sama memupuk
@@ -314,13 +342,21 @@ export default function Home() {
             antara manusia, satwa, dan lingkungan.
           </p>
         </div>
-        <div className="flex flex-wrap md:flex-row items-center justify-center w-full gap-2 mb-10">
-          {content &&
-            content.map((e, i) => (
-              <div
-                key={i}
-                className="h-[180px] w-[100px] bg-[#d9d9d9] rounded-md"
-              ></div>
+        <div className="flex flex-wrap md:flex-row items-center justify-center w-full gap-2 pb-10 relative">
+          {tBanner &&
+            tBanner.map((e, i) => (
+              <div key={i} className=" bg-[#d9d9d9] rounded-md">
+                <Image
+                  key={i}
+                  src={`/${e}`}
+                  alt="logo"
+                  width="0"
+                  height="0"
+                  sizes="100vw"
+                  priority={true}
+                  className="block md:h-[280px] md:w-[120px] h-[250px] w-[90px] rounded-md"
+                />
+              </div>
             ))}
         </div>
       </div>
@@ -334,42 +370,76 @@ export default function Home() {
               ? festivalTicket.map((e) => (
                   <div
                     key={e.id}
-                    className="h-[180px] w-[300px] bg-[#d9d9d9] rounded-md flex items-start p-4 gap-4"
+                    className="h-[180px] w-[300px] bg-[#f0c01b] rounded-md flex items-start justify-center p-4 gap-4 flex-col text-[#0a6c72] "
                   >
-                    <div className="flex flex-col items-center justify-center">
-                      <p className="text-xs text-[#0a6c72] font-medium">AUG</p>
-                      <p className="text-lg font-bold">12</p>
+                    <div className="flex flex-row gap-5 items-center justify-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <p className="text-xs text-[#0a6c72] font-medium">
+                          AUG
+                        </p>
+                        {e.name === "Day One Pass" ? (
+                          <p className="text-lg font-bold">12</p>
+                        ) : e.name === "Day Two Pass" ? (
+                          <p className="text-lg font-bold">13</p>
+                        ) : (
+                          <div className="text-lg font-bold">
+                            <p>12</p>
+                            <div className="h-[2px] w-full bg-[#0a6c72]"></div>
+                            <p>13</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="h-full flex flex-col items-start">
+                        <p className="text-xs font-bold">
+                          {e.name === "Day One Pass"
+                            ? "Hari Pertama"
+                            : e.name === "Day Two Pass"
+                            ? "Hari kedua"
+                            : "Paket Hari Pertama & Kedua"}
+                        </p>
+                        <div className="flex w-full gap-2">
+                          <p className="text-xs font-semibold">
+                            RP {e.price.toString().slice(0, 2)}.
+                            {e.price.toString().slice(2)},-
+                          </p>
+                          {e.name === "Day One and Two Bundle Pass" && (
+                            <Image
+                              src="/hot-deals.png"
+                              alt="logo"
+                              width="0"
+                              height="0"
+                              sizes="100vw"
+                              priority={true}
+                              className="block w-auto h-auto"
+                            />
+                          )}
+                        </div>
+
+                        <p className="text-xs">{e.description}</p>
+                      </div>
                     </div>
 
-                    <div className="h-full flex flex-col items-start gap-5">
-                      <p className="text-xs font-medium">{e.name}</p>
-                      {/* <p className="text-xs text-[#6a6a6a]">{e.description}</p> */}
-                      <p className="text-xs text-[#6a6a6a]">
-                        We will get you directly seated and inside for you to
-                        enjoy the show.
+                    <div className="flex w-full items-center justify-center gap-2 z-40">
+                      <button
+                        className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
+                        onClick={() => decreaseBookingQuantity(e)}
+                      >
+                        -
+                      </button>
+                      <p>
+                        {e.name === "Day One Pass"
+                          ? festivalTicketBooking.dayOnePass.quantity
+                          : e.name === "Day Two Pass"
+                          ? festivalTicketBooking.dayTwoPass.quantity
+                          : festivalTicketBooking.budlePass.quantity}
                       </p>
-
-                      <div className="flex w-full items-center justify-center gap-2">
-                        <button
-                          className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
-                          onClick={() => decreaseBookingQuantity(e)}
-                        >
-                          -
-                        </button>
-                        <p>
-                          {e.name === "Day One Pass"
-                            ? festivalTicketBooking.dayOnePass.quantity
-                            : e.name === "Day Two Pass"
-                            ? festivalTicketBooking.dayTwoPass.quantity
-                            : festivalTicketBooking.budlePass.quantity}
-                        </p>
-                        <button
-                          className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
-                          onClick={() => addBookingQuantity(e)}
-                        >
-                          +
-                        </button>
-                      </div>
+                      <button
+                        className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
+                        onClick={() => addBookingQuantity(e)}
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 ))
@@ -421,28 +491,54 @@ export default function Home() {
             {marathonTicker.length > 0
               ? marathonTicker.map((e, i) => (
                   <div
-                    key={i}
-                    className="h-[180px] w-[300px] bg-[#d9d9d9] rounded-md flex items-start p-4 gap-4"
+                    key={e.id}
+                    className="h-[250px] w-[350px] bg-[#0a6c72] text-white rounded-md flex items-center justify-center p-4 gap-4 flex-col "
                   >
-                    <div className="flex flex-col items-center justify-center">
-                      <p className="text-xs text-[#0a6c72] font-medium">KM</p>
-                      <p className="text-lg font-bold">{parseInt(e.name)}</p>
+                    <div className="flex flex-row gap-5 items-center justify-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <p className="text-xs text-white font-medium">KM</p>
+                        <p className="text-lg font-bold">{parseInt(e.name)}</p>
+                      </div>
+
+                      <div className="h-full flex flex-col items-start">
+                        <p className="text-xs font-medium">
+                          RP {e.price.toString().slice(0, 3)}.
+                          {e.price.toString().slice(3)},-
+                        </p>
+                        <p className="text-xs text-white">{e.description}</p>
+                      </div>
                     </div>
 
-                    <div className="h-full flex flex-col items-start gap-5">
-                      <p className="text-xs font-medium">{e.name}</p>
-                      <p className="text-xs text-[#6a6a6a]">
-                        We will get you directly seated and inside for you to
-                        enjoy the show.
-                      </p>
+                    {e.name === "7 Km Marathon Pass" ? (
+                      <Image
+                        src="/7 Km Marathon Pass.png"
+                        alt="logo"
+                        width="0"
+                        height="0"
+                        sizes="100vw"
+                        priority={true}
+                        className="block w-auto h-auto"
+                      />
+                    ) : (
+                      <Image
+                        src="/21 Km Marathon Pass.png"
+                        alt="logo"
+                        width="0"
+                        height="0"
+                        sizes="100vw"
+                        priority={true}
+                        className="block w-auto h-auto"
+                      />
+                    )}
 
+                    <div className="flex w-full items-center justify-center gap-2">
                       <div className="flex w-full items-center justify-center gap-2">
                         <Button
                           onPress={() => {
                             onOpenMarathon();
                             setSelectedMarathon(e.id);
                           }}
-                          className="bg-[#ffffff] text-[#0a6c72] rounded-lg px-2 border border-[#0a6c72] flex items-center justify-center text-xs"
+                          className="bg-[#ffffff] text-[#0a6c72] rounded-2xl  border border-[#0a6c72] flex items-center justify-center text-xs"
                         >
                           Registrasi
                         </Button>
@@ -476,10 +572,10 @@ export default function Home() {
       </div>
 
       {/* Lampung Little Indonesia */}
-      <div className="bg-[#f0c01b] flex flex-col items-center justify-center gap-8 mt-8 py-5 w-full">
+      <div className="bg-[#f0c01b] flex flex-col items-center justify-center gap-8 mt-8 w-full py-5 px-5 md:px-0">
         <div className="flex flex-col items-center justify-center gap-4 w-full md:w-2/4 text-[#0a6c72]">
           <h1 className="md:text-2xl font-semibold">
-            LAMPUNG = LITTLE INDONESIA
+            Lampung = Little Indonesia
           </h1>
           <p className="text-center font-medium text-sm md:text-base">
             Semangat kemenangan ada di depan mata, gelora persatuan turut
@@ -498,10 +594,10 @@ export default function Home() {
       {/* Supported By */}
       <div className="flex flex-col items-center justify-center mt-8 gap-8">
         <h1 className="text-lg font-medium">Supported By</h1>
-        <div className="flex flex-wrap items-center justify-center gap-8 w-full md:w-2/4 text-[#0a6c72]">
+        <div className="flex flex-wrap items-center justify-center gap-3 w-4/5 md:w-2/4 text-[#0a6c72]">
           {supportedByImageLink.map((e, i) => (
             <div
-              className="flex items-center justify-center w-[130px] h-[130px] bg-[#f0c01b] rounded-md"
+              className="flex items-center justify-center md:w-[130px] md:h-p[130px] w-[70px] h-[70px] bg-[#f0c01b] rounded-md"
               key={i}
             >
               <Image
@@ -512,7 +608,7 @@ export default function Home() {
                 height="0"
                 sizes="100vw"
                 priority={true}
-                className="block max-h-[120px] max-w-[120px] w-auto h-auto "
+                className="block md:max-w-[120px] md:max-h-p[120px] max-h-[60px] max-w-[60px] w-auto h-auto "
               />
             </div>
           ))}
