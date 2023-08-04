@@ -679,7 +679,7 @@ export default function Home() {
           <h1 className="md:text-2xl font-semibold">
             Lampung = Little Indonesia
           </h1>
-          {/* <Map /> */}
+          <Map />
           <p className="text-sm font-semibold">
             Lokasi: Jln Dugul, Desa Braja Harjosari, Lampung Timur
           </p>
