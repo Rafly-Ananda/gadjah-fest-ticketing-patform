@@ -32,10 +32,6 @@ const Navbar: FC<any> = () => {
       observer.observe(document.getElementById("hero")!);
     }
     setIsNavOpen(false);
-
-    // return () => {
-    //   observer.unobserve(document.getElementById("hero")!);
-    // };
   }, [pathname]);
 
   return (
@@ -44,7 +40,7 @@ const Navbar: FC<any> = () => {
         isIntersecting
           ? "bg-transparent"
           : "bg-gradient-to-b from-[#0a6c72] to-transparent"
-      }  md:p-4 px-7 py-4 z-10 w-full`}
+      }  md:p-4 px-7 py-4 w-full z-50`}
     >
       <CheckTicketModal
         isOpen={isOpen}

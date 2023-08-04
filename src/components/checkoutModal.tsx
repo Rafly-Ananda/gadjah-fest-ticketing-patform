@@ -18,6 +18,8 @@ interface ComponentProps {
   buyerData: buyerDataType | undefined;
   setBuyerData: React.Dispatch<React.SetStateAction<buyerDataType>>;
   isBooking: boolean;
+  onClose: any;
+  onOpenConfirm: any;
 }
 
 const CheckoutModal: FC<ComponentProps> = ({
@@ -27,6 +29,8 @@ const CheckoutModal: FC<ComponentProps> = ({
   buyerData,
   setBuyerData,
   isBooking,
+  onClose,
+  onOpenConfirm,
 }) => {
   return (
     <>
@@ -36,9 +40,10 @@ const CheckoutModal: FC<ComponentProps> = ({
         isDismissable={false}
         placement="center"
         size="xs"
+        onClose={onClose}
       >
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
                 Booking Ticket
@@ -97,10 +102,7 @@ const CheckoutModal: FC<ComponentProps> = ({
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={async () => {
-                    await handleBooking();
-                    onClose();
-                  }}
+                  onPress={onOpenConfirm}
                   isLoading={isBooking ? true : false}
                 >
                   Pesan

@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,10 +8,12 @@ import {
   ModalFooter,
   Button,
   Input,
+  useDisclosure,
 } from "@nextui-org/react";
 import { MarathonDetailType } from "@/interfaces";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/react";
+import Image from "next/image";
 
 interface ComponentProps {
   isOpen: boolean;
@@ -20,6 +22,8 @@ interface ComponentProps {
   marathonDetail: MarathonDetailType | undefined;
   setMarathonDetail: React.Dispatch<React.SetStateAction<MarathonDetailType>>;
   isBooking: boolean;
+  onClose: any;
+  onOpenConfirm: any;
 }
 
 const MarathonRegistrationModal: FC<ComponentProps> = ({
@@ -29,6 +33,8 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
   marathonDetail,
   setMarathonDetail,
   isBooking,
+  onClose,
+  onOpenConfirm,
 }) => {
   return (
     <>
@@ -39,14 +45,24 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
         scrollBehavior="inside"
         placement="center"
         size="md"
+        onClose={onClose}
       >
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
                 Marathon Registartion
               </ModalHeader>
               <ModalBody>
+                <Image
+                  src="/half-marathon-popup.png"
+                  alt="logo"
+                  width="0"
+                  height="0"
+                  sizes="100vw"
+                  priority={true}
+                  className="w-auto h-auto"
+                />
                 <Input
                   autoFocus
                   label="Email"
@@ -211,10 +227,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={async () => {
-                    await handleBooking();
-                    onClose();
-                  }}
+                  onPress={onOpenConfirm}
                   isLoading={isBooking ? true : false}
                 >
                   Pesan

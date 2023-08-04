@@ -4,7 +4,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { PROJECT_HOST } from "@/config";
 import { Ticket } from "@prisma/client";
-import { useRouter } from "next/navigation";
 import { Button, useDisclosure } from "@nextui-org/react";
 import CheckoutModal from "@/components/checkoutModal";
 import MarathonRegistrationModal from "@/components/marthonRegistrationModal";
@@ -15,26 +14,46 @@ import {
 } from "@/interfaces";
 import BookingConfirmationModal from "@/components/bookingConfirmationModal";
 import { Card, Skeleton } from "@nextui-org/react";
+import dynamic from "next/dynamic";
+import ConfirmationModal from "@/components/confirmationModal";
+import FestivalConfirmationModal from "@/components/festivalConfirmationModal";
+
+const Map = dynamic(() => import("../components/leafletMap"), {
+  ssr: false,
+});
 
 const supportedByImageLink = [
   "CoinFolks.png",
-  "DREZZO LOGO_CLEAR BACKGROUND.png",
+  "Drezzo new.png",
   "Gadjah Society Purple.png",
   "IEI.png",
   "Imah arch.jpg",
   "Koperasi PNG.png",
   "KTH Bina Warga.png",
   "KTH Rahayu Jaya_PLVII.jpg",
-  "Liman Wana Asri_LRVI.png",
-  "Logo FKGI_Vector Remake-03.png",
+  "FKGI_merah.jpg",
   "LOGO KUYOUID FONT REV2.png",
   "LOGO MAJA LABS_.png",
   "Logo_Pesona_Indonesia_(Kementerian_Pariwisata).png",
   "NOAH.png",
-  "OXLABS.png",
+  "Oxlabs Hitam Horizontal.png",
   "POKDARWIS.jpg",
   "Solar Generation.png",
   "TN Way Kambas.png",
+  "SATWA Ecolodges.jpg",
+  "Ecosafari.jpg",
+  "Logo_ITERA.png",
+  "UNU.png",
+  "darusalam.png",
+  "Logo_UnivLampung.png",
+  "braja harjosari.png",
+  "bumdes.png",
+  "trans api.png",
+  "koperasi pl7.png",
+  "yekti.png",
+  "kencana.png",
+  "shelter-baru.png",
+  "kopkop.png",
 ];
 
 const tBanner = [
@@ -55,16 +74,29 @@ interface BookingDetailsRespond {
 }
 
 export default function Home() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const {
     isOpen: isOpenMarathon,
     onOpen: onOpenMarathon,
     onOpenChange: onOpenChangeMarathon,
+    onClose: onCloseMarathon,
   } = useDisclosure();
   const {
     isOpen: bookingConfirmIsOpen,
     onOpen: bookingConfirmOnOpen,
     onOpenChange: bookingConfirmOnOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenConfirm,
+    onOpen: onOpenConfirm,
+    onOpenChange: onOpenChangeConfirm,
+    onClose: onCloseConfirm,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenConfirmFestival,
+    onOpen: onOpenConfirmFestival,
+    onOpenChange: onOpenChangeConfirmFestival,
+    onClose: onCloseConfirmFestival,
   } = useDisclosure();
 
   const [festivalTicket, setFestivalTicket] = useState<Ticket[]>([]);
@@ -240,7 +272,8 @@ export default function Home() {
       bookingConfirmOnOpen();
 
       setIsBooking(false);
-
+      onClose();
+      onCloseConfirmFestival();
       return;
     } catch (e) {
       console.log(e);
@@ -250,33 +283,98 @@ export default function Home() {
   const handleMarathonRegistartion = async () => {
     setIsBooking(true);
 
-    const bookingPayload = {
-      user: {
-        ...marathonDetail,
-      },
-      details: [{ ticketId: selectedMarathon, quantity: 1 }],
-    };
+    try {
+      const bookingPayload = {
+        user: {
+          ...marathonDetail,
+        },
+        details: [{ ticketId: selectedMarathon, quantity: 1 }],
+      };
+      onCloseConfirm();
 
-    const { data } = await axios.post(
-      `${PROJECT_HOST}/api/booking/marathon`,
-      bookingPayload
-    );
+      const { data } = await axios.post(
+        `${PROJECT_HOST}/api/booking/marathon`,
+        bookingPayload
+      );
 
-    setbookingObj({
-      bookingCode: data.booking.generatedBookingCode,
-      invoiceUrl: data.booking.invoiceUrl,
-    });
+      setbookingObj({
+        bookingCode: data.booking.generatedBookingCode,
+        invoiceUrl: data.booking.invoiceUrl,
+      });
+      bookingConfirmOnOpen();
 
-    setIsBooking(false);
-    return;
+      setIsBooking(false);
+      onCloseMarathon();
+      onCloseConfirm();
+      return;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
+    setFestivalTicket([]);
+    setMarathonTicket([]);
+    setIsBooking(false);
+    setSelectedMarathon("");
+    setbookingObj({
+      bookingCode: "",
+      invoiceUrl: "",
+    });
+    setFestivalTicketBooking({
+      dayOnePass: {
+        id: "",
+        quantity: 0,
+      },
+      dayTwoPass: {
+        id: "",
+        quantity: 0,
+      },
+      budlePass: {
+        id: "",
+        quantity: 0,
+      },
+    });
+    setBuyerData({
+      email: "",
+      firstName: "",
+      lastName: "",
+      mobileNumber: "",
+    });
+    setMarathonDetail({
+      user: {
+        email: "",
+        firstName: "",
+        lastName: "",
+        mobileNumber: "",
+        gender: "",
+        marathonSkill: "",
+      },
+      contactInformation: {
+        email: "",
+        firstName: "",
+        lastName: "",
+        mobileNumber: "",
+      },
+      additionalInformation: "",
+    });
     fetchAllTicket();
   }, []);
 
   return (
     <main className="flex flex-col items-center justify-center relative">
+      <FestivalConfirmationModal
+        isOpen={isOpenConfirmFestival}
+        onOpenChange={onOpenChangeConfirmFestival}
+        onClose={onCloseConfirmFestival}
+        handleFestivalBooking={handleBooking}
+      />
+      <ConfirmationModal
+        isOpen={isOpenConfirm}
+        onOpenChange={onOpenChangeConfirm}
+        onClose={onCloseConfirm}
+        handleMarathonBooking={handleMarathonRegistartion}
+      />
       <CheckoutModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -284,6 +382,8 @@ export default function Home() {
         setBuyerData={setBuyerData}
         handleBooking={handleBooking}
         isBooking={isBooking}
+        onClose={onClose}
+        onOpenConfirm={onOpenConfirmFestival}
       />
       <MarathonRegistrationModal
         isOpen={isOpenMarathon}
@@ -292,6 +392,8 @@ export default function Home() {
         setMarathonDetail={setMarathonDetail}
         handleBooking={handleMarathonRegistartion}
         isBooking={isBooking}
+        onClose={onCloseMarathon}
+        onOpenConfirm={onOpenConfirm}
       />
       <BookingConfirmationModal
         isOpen={bookingConfirmIsOpen}
@@ -517,7 +619,7 @@ export default function Home() {
                         height="0"
                         sizes="100vw"
                         priority={true}
-                        className="block w-auto h-auto"
+                        className="block w-[100px] h-[100px]"
                       />
                     ) : (
                       <Image
@@ -527,7 +629,7 @@ export default function Home() {
                         height="0"
                         sizes="100vw"
                         priority={true}
-                        className="block w-auto h-auto"
+                        className="block w-[100px] h-[100px]"
                       />
                     )}
 
@@ -572,21 +674,36 @@ export default function Home() {
       </div>
 
       {/* Lampung Little Indonesia */}
-      <div className="bg-[#f0c01b] flex flex-col items-center justify-center gap-8 mt-8 w-full py-5 px-5 md:px-0">
-        <div className="flex flex-col items-center justify-center gap-4 w-full md:w-2/4 text-[#0a6c72]">
+      <div className="relative bg-[#f0c01b] flex md:flex-row flex-col items-center justify-center gap-8 mt-32 w-full md:h-[400px] py-5 px-5 md:px-0">
+        <div className="flex flex-col md:items-start items-center  justify-center gap-4 w-full md:w-2/4 text-[#0a6c72] md:pl-40 pt-28 md:pt-0 z-0">
           <h1 className="md:text-2xl font-semibold">
             Lampung = Little Indonesia
           </h1>
-          <p className="text-center font-medium text-sm md:text-base">
-            Semangat kemenangan ada di depan mata, gelora persatuan turut
-            menyuarakan asa. Kini saatnya kita kembali, bersama-sama memupuk
-            harapan. Bersatu padu menyuarakan kemenangan.
+          {/* <Map /> */}
+          <p className="text-sm font-semibold">
+            Lokasi: Jln Dugul, Desa Braja Harjosari, Lampung Timur
           </p>
-          <p className="text-center font-medium text-sm md:text-base">
-            Gadjah Fest 2023 mengundang semua pihak untuk bersatu menyuarakan
-            semangat juang bersama masyarakat dan alam di sekitar kita. Tahun
-            ini, mari saling menginspirasi melalui semangat hidup berdampingan
-            antara manusia, satwa, dan lingkungan.
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-4 w-full md:w-2/4 text-[#0a6c72] md:pr-24 md:pt-24">
+          <Image
+            src="/icon-rumah.png"
+            alt="logo"
+            width="0"
+            height="0"
+            sizes="100vw"
+            priority={true}
+            className="block absolute md:-top-24 md:right-1 -top-16 md:h-[250px] md:w-[300px] h-[200px] w-[200px] rounded-md mb-5"
+          />
+          <p className="md:text-left text-center font-medium text-sm md:text-base">
+            Tahun ini menjadi saksi bahwa Lampung mampu bangkit dari segala
+            tantangan. Perjuangan ini tidak luput dari peran semangat satu sama
+            lain yang saling menginspirasi.
+          </p>
+          <p className="md:text-left text-center font-medium text-sm md:text-base">
+            Gadjah Fest 2023 mengundang kalian para pejuang, untuk merayakan dan
+            menyuarakan ketangguhan yang telah kita tunjukkan di tempat yang
+            mana banyak suku, budaya, dan ras berkumpul menjadi satu.
           </p>
         </div>
       </div>
@@ -594,10 +711,10 @@ export default function Home() {
       {/* Supported By */}
       <div className="flex flex-col items-center justify-center mt-8 gap-8">
         <h1 className="text-lg font-medium">Supported By</h1>
-        <div className="flex flex-wrap items-center justify-center gap-3 w-4/5 md:w-2/4 text-[#0a6c72]">
+        <div className="flex flex-wrap items-center justify-center gap-3 w-4/5 md:w-3/5 text-[#0a6c72]">
           {supportedByImageLink.map((e, i) => (
             <div
-              className="flex items-center justify-center md:w-[130px] md:h-p[130px] w-[70px] h-[70px] bg-[#f0c01b] rounded-md"
+              className="flex items-center justify-center md:w-[150px] md:h-p[150px] w-[70px] h-[70px] border border-[#f0c01b] rounded-md"
               key={i}
             >
               <Image
@@ -608,7 +725,7 @@ export default function Home() {
                 height="0"
                 sizes="100vw"
                 priority={true}
-                className="block md:max-w-[120px] md:max-h-p[120px] max-h-[60px] max-w-[60px] w-auto h-auto "
+                className="block md:max-w-[140px] md:max-h-p[140px] max-h-[60px] max-w-[60px] w-auto h-auto "
               />
             </div>
           ))}
@@ -640,10 +757,10 @@ export default function Home() {
                 src="/facebook.png"
                 alt="logo"
                 width="10"
-                height="10"
+                height="11"
                 sizes="100vw"
                 priority={true}
-                className="w-auto h-auto"
+                className="md:w-[10px] md:h-[14 px]"
               />
               <Image
                 src="/instagram.png"
@@ -652,7 +769,7 @@ export default function Home() {
                 height="14"
                 sizes="100vw"
                 priority={true}
-                className="w-auto h-auto"
+                className="md:w-[14px] md:h-[14px]"
               />
             </div>
           </div>

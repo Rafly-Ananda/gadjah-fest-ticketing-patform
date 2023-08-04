@@ -53,11 +53,13 @@ export default function Page({ params }: { params: { id: string } }) {
   if (bookingStatus === "PENDING") {
     return (
       <main className="pt-28 md:pt-32">
-        <div className="border border-[#0a6c72] p-16 rounded-lg">
-          <h1>
-            Lakukan pembayaran untuk booking dengan ID
-            <strong> {params.id}</strong>
-          </h1>
+        <div className="flex flex-col gap-4 items-center justify-center pt-2">
+          <div className="border border-[#0a6c72] p-16 rounded-lg">
+            <h1>
+              Lakukan pembayaran untuk booking dengan ID
+              <strong> {params.id}</strong>
+            </h1>
+          </div>
         </div>
       </main>
     );
@@ -66,12 +68,14 @@ export default function Page({ params }: { params: { id: string } }) {
   if (bookingStatus === "EXPIRED") {
     return (
       <main className="pt-28 md:pt-32">
-        <div className="border border-[#0a6c72] p-16 rounded-lg max-w-2xl">
-          <h1>
-            Booking dengan ID <strong>{params.id}</strong> telah hangus, karena
-            anda melewati batas waktu pembayaran, silahkan lakukan booking
-            ulang.
-          </h1>
+        <div className="flex flex-col gap-4 items-center justify-center pt-2">
+          <div className="border border-[#0a6c72] p-16 rounded-lg">
+            <h1>
+              Booking dengan ID <strong>{params.id}</strong> telah hangus,
+              karena anda melewati batas waktu pembayaran, silahkan lakukan
+              booking ulang.
+            </h1>
+          </div>
         </div>
       </main>
     );
@@ -90,7 +94,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <QRCode
                 size={256}
                 style={{ height: "auto", maxWidth: "15%", width: "15%" }}
-                value={e}
+                value={e.id}
                 viewBox={`0 0 256 256`}
               />
               <div className="flex items-start justity-center">
