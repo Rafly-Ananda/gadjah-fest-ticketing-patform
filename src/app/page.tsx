@@ -513,7 +513,7 @@ export default function Home() {
                               height="0"
                               sizes="100vw"
                               priority={true}
-                              className="block w-auto h-auto"
+                              className="block w-[35px] h-[15px]"
                             />
                           )}
                         </div>
@@ -679,7 +679,10 @@ export default function Home() {
           <h1 className="md:text-2xl font-semibold">
             Lampung = Little Indonesia
           </h1>
-          <Map />
+          <a href="https://www.google.com/maps/place/Gadjah+Fest/@-5.182838,105.78751,15z/data=!4m2!3m1!1s0x0:0xcfd1f46ae0bb31ec?sa=X&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhDEAA&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhNEAM">
+            <Map />
+          </a>
+
           <p className="text-sm font-semibold">
             Lokasi: Jln Dugul, Desa Braja Harjosari, Lampung Timur
           </p>
@@ -745,7 +748,7 @@ export default function Home() {
             className="h-auto md:w-[100px] w-[70px]"
           />
 
-          <div className="flex flex-col items-center justify-center gap-1 ">
+          <div className="flex flex-col items-center justify-center gap-1 z-50">
             <h1 className="text-white font-semibold md:text-sm text-xs">
               HUBUNGI KAMI
             </h1>
@@ -753,24 +756,29 @@ export default function Home() {
               info@gadjahfest.com
             </p>
             <div className="flex gap-2">
-              <Image
-                src="/facebook.png"
-                alt="logo"
-                width="10"
-                height="11"
-                sizes="100vw"
-                priority={true}
-                className="md:w-[10px] md:h-[14 px]"
-              />
-              <Image
-                src="/instagram.png"
-                alt="logo"
-                width="14"
-                height="14"
-                sizes="100vw"
-                priority={true}
-                className="md:w-[14px] md:h-[14px]"
-              />
+              <a href="https://www.facebook.com/profile.php?id=100095413808267">
+                <Image
+                  src="/facebook.png"
+                  alt="logo"
+                  width="10"
+                  height="11"
+                  sizes="100vw"
+                  priority={true}
+                  className="md:w-[10px] md:h-[14 px]"
+                />
+              </a>
+
+              <a href="https://www.instagram.com/gadjahfest/">
+                <Image
+                  src="/instagram.png"
+                  alt="logo"
+                  width="14"
+                  height="14"
+                  sizes="100vw"
+                  priority={true}
+                  className="md:w-[14px] md:h-[14px]"
+                />
+              </a>
             </div>
           </div>
         </div>

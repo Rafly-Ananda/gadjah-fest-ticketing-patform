@@ -61,7 +61,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   height="0"
                   sizes="100vw"
                   priority={true}
-                  className="w-auto h-auto"
+                  className="w-[500px] h-[400px]"
                 />
                 <Input
                   autoFocus
