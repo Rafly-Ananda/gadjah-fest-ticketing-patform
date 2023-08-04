@@ -26,15 +26,14 @@ const BookingConfirmationModal: FC<ComponentProps> = ({
   onOpenChange,
   bookingObj,
 }) => {
-  console.log("==================");
-  console.log(bookingObj);
   return (
     <>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         isDismissable={false}
-        placement="top-center"
+        placement="center"
+        size="xs"
       >
         <ModalContent>
           {(onClose) => (

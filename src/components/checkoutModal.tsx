@@ -34,7 +34,8 @@ const CheckoutModal: FC<ComponentProps> = ({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         isDismissable={false}
-        placement="top-center"
+        placement="center"
+        size="xs"
       >
         <ModalContent>
           {(onClose) => (
@@ -95,7 +96,7 @@ const CheckoutModal: FC<ComponentProps> = ({
               </ModalBody>
               <ModalFooter>
                 <Button
-                  color="primary"
+                  className="bg-[#0a6c72] text-white"
                   onPress={async () => {
                     await handleBooking();
                     onClose();

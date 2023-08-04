@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import QRCode from "react-qr-code";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -28,8 +27,8 @@ export default function Page({ params }: { params: { id: string } }) {
   }, [params.id]);
 
   if (isLoading) {
-    <main className="">
-      <div className="flex flex-col gap-4 items-center justify-center mt-5 pt-2">
+    <main className="pt-28 md:pt-32">
+      <div className="flex flex-col gap-4 items-center justify-center pt-2">
         <div className="border border-[#0a6c72] p-16 rounded-lg">
           <h1>Loading . . .</h1>
         </div>
@@ -39,8 +38,8 @@ export default function Page({ params }: { params: { id: string } }) {
 
   if (message === "Booking not found") {
     return (
-      <main className="">
-        <div className="flex flex-col gap-4 items-center justify-center mt-5 pt-2">
+      <main className="pt-28 md:pt-32">
+        <div className="flex flex-col gap-4 items-center justify-center pt-2">
           <div className="border border-[#0a6c72] p-16 rounded-lg">
             <h1>
               Tidak ada booking dengan ID <strong>{params.id}</strong>
@@ -53,7 +52,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   if (bookingStatus === "PENDING") {
     return (
-      <main className="">
+      <main className="pt-28 md:pt-32">
         <div className="border border-[#0a6c72] p-16 rounded-lg">
           <h1>
             Lakukan pembayaran untuk booking dengan ID
@@ -66,7 +65,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   if (bookingStatus === "EXPIRED") {
     return (
-      <main className="">
+      <main className="pt-28 md:pt-32">
         <div className="border border-[#0a6c72] p-16 rounded-lg max-w-2xl">
           <h1>
             Booking dengan ID <strong>{params.id}</strong> telah hangus, karena
@@ -79,8 +78,8 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="">
-      <div className="flex flex-col gap-4 items-center justify-center mt-5 pt-2">
+    <main className="pt-28 md:pt-32">
+      <div className="flex flex-col gap-4 items-center justify-center pt-2">
         <h1 className="text-lg font-semibold">Electronic Ticket</h1>
         {tickets &&
           tickets.map((e: any, i) => (
@@ -91,7 +90,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <QRCode
                 size={256}
                 style={{ height: "auto", maxWidth: "15%", width: "15%" }}
-                value={"www.youtube.com"}
+                value={e}
                 viewBox={`0 0 256 256`}
               />
               <div className="flex items-start justity-center">

@@ -286,7 +286,7 @@ export default function Home() {
         onOpenChange={bookingConfirmOnOpenChange}
         bookingObj={bookingObj}
       />
-      <div className="h-[700px] w-full relative brightness-50">
+      <div className="h-[700px] w-full relative brightness-50" id="hero">
         <Image
           src="/marathon-indonesia.jpg"
           alt="logo"
@@ -296,23 +296,23 @@ export default function Home() {
         />
       </div>
       <div className="relative bg-[#0a6c72] flex flex-col items-center justify-center gap-8 w-full pt-10">
-        <div className="flex flex-col items-center justify-center gap-4 w-2/4 text-white">
-          <h1 className="absolute text-4xl font-medium -top-6">
+        <div className="flex flex-col items-center justify-center gap-4 md:w-2/4 w-full text-white">
+          <h1 className="absolute md:text-4xl font-medium md:-top-6 -top-5 text-2xl">
             #HidupBerdampingan
           </h1>
-          <p className="text-center font-medium">
+          <p className="text-center font-medium text-sm md:text-base">
             Semangat kemenangan ada di depan mata, gelora persatuan turut
             menyuarakan asa. Kini saatnya kita kembali, bersama-sama memupuk
             harapan. Bersatu padu menyuarakan kemenangan.
           </p>
-          <p className="text-center font-medium">
+          <p className="text-center font-medium text-sm md:text-base">
             Gadjah Fest 2023 mengundang semua pihak untuk bersatu menyuarakan
             semangat juang bersama masyarakat dan alam di sekitar kita. Tahun
             ini, mari saling menginspirasi melalui semangat hidup berdampingan
             antara manusia, satwa, dan lingkungan.
           </p>
         </div>
-        <div className="flex items-center justify-center w-full gap-2 mb-10">
+        <div className="flex flex-wrap md:flex-row items-center justify-center w-full gap-2 mb-10">
           {content &&
             content.map((e, i) => (
               <div
@@ -325,9 +325,9 @@ export default function Home() {
 
       {/* Tiket Festival */}
       <div className="flex items-center justify-center w-full pt-8">
-        <div className="flex flex-col gap-8  w-3/5">
+        <div className="flex flex-col items-center gap-8 md:w-3/5 lg:w-3/5 w-full p-2 md:p-0">
           <h1 className="text-lg font-medium">Tiket Festival</h1>
-          <div className="flex flex-row gap-4 items-center justify-center">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
             {festivalTicket &&
               festivalTicket.map((e) => (
                 <div
@@ -380,7 +380,7 @@ export default function Home() {
           </button> */}
           <Button
             onPress={onOpen}
-            className="bg-[#0a6c72] hover:bg-[#08555a] text-white"
+            className="bg-[#0a6c72] hover:bg-[#08555a] text-white w-[300px]"
           >
             Checkout
           </Button>
@@ -389,7 +389,7 @@ export default function Home() {
 
       {/* Registrasi Marathon */}
       <div className="flex items-center justify-center w-full pt-5">
-        <div className="flex flex-col gap-8  w-3/5">
+        <div className="flex flex-col items-center gap-8 md:w-3/5 lg:w-3/5 w-full p-2 md:p-0">
           <h1 className="text-lg font-medium">Registrasi Marathon</h1>
 
           <div className=" flex flex-col items-center justify-center">
@@ -398,7 +398,7 @@ export default function Home() {
               Sabtu, <span className="text-3xl">12</span> Agustus 2023
             </h2>
           </div>
-          <div className="flex flex-row gap-4 items-center justify-center">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
             {marathonTicker &&
               marathonTicker.map((e, i) => (
                 <div
@@ -443,14 +443,16 @@ export default function Home() {
 
       {/* Lampung Little Indonesia */}
       <div className="bg-[#f0c01b] flex flex-col items-center justify-center gap-8 mt-8 py-5 w-full">
-        <div className="flex flex-col items-center justify-center gap-4 w-2/4 text-[#0a6c72]">
-          <h1 className="text-2xl font-semibold">LAMPUNG = LITTLE INDONESIA</h1>
-          <p className="text-center font-medium">
+        <div className="flex flex-col items-center justify-center gap-4 w-full md:w-2/4 text-[#0a6c72]">
+          <h1 className="md:text-2xl font-semibold">
+            LAMPUNG = LITTLE INDONESIA
+          </h1>
+          <p className="text-center font-medium text-sm md:text-base">
             Semangat kemenangan ada di depan mata, gelora persatuan turut
             menyuarakan asa. Kini saatnya kita kembali, bersama-sama memupuk
             harapan. Bersatu padu menyuarakan kemenangan.
           </p>
-          <p className="text-center font-medium">
+          <p className="text-center font-medium text-sm md:text-base">
             Gadjah Fest 2023 mengundang semua pihak untuk bersatu menyuarakan
             semangat juang bersama masyarakat dan alam di sekitar kita. Tahun
             ini, mari saling menginspirasi melalui semangat hidup berdampingan
@@ -462,7 +464,7 @@ export default function Home() {
       {/* Supported By */}
       <div className="flex flex-col items-center justify-center mt-8 gap-8">
         <h1 className="text-lg font-medium">Supported By</h1>
-        <div className="flex flex-wrap items-center justify-center gap-8 w-2/4 text-[#0a6c72]">
+        <div className="flex flex-wrap items-center justify-center gap-8 w-full md:w-2/4 text-[#0a6c72]">
           {supportedByImageLink.map((e, i) => (
             <div
               className="flex items-center justify-center w-[130px] h-[130px] bg-[#f0c01b] rounded-md"
@@ -484,8 +486,8 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-[#222222] mt-8 w-full flex flex-col  items-center">
-        <div className="flex items-center justify-between w-3/5 p-5">
+      <footer className="bg-[#222222] mt-8 w-full flex flex-col items-center">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full md:w-3/5 p-5 gap-5">
           <Image
             src="/footer_logo.png"
             alt="logo"
@@ -493,18 +495,22 @@ export default function Home() {
             height="0"
             sizes="100vw"
             priority={true}
-            className="h-auto w-[100px]"
+            className="h-auto md:w-[100px] w-[70px]"
           />
 
-          <div className="flex flex-col gap-1">
-            <h1 className="text-white font-semibold text-">HUBUNGI KAMI</h1>
-            <p className="text-[#818181] text-sm">info@gadjahfest.com</p>
+          <div className="flex flex-col items-center justify-center gap-1 ">
+            <h1 className="text-white font-semibold md:text-sm text-xs">
+              HUBUNGI KAMI
+            </h1>
+            <p className="text-[#818181] md:text-sm text-xs">
+              info@gadjahfest.com
+            </p>
             <div className="flex gap-2">
               <Image
                 src="/facebook.png"
                 alt="logo"
-                width="8"
-                height="8"
+                width="10"
+                height="10"
                 sizes="100vw"
                 priority={true}
                 className="w-auto h-auto"
@@ -512,8 +518,8 @@ export default function Home() {
               <Image
                 src="/instagram.png"
                 alt="logo"
-                width="12"
-                height="12"
+                width="14"
+                height="14"
                 sizes="100vw"
                 priority={true}
                 className="w-auto h-auto"
@@ -523,7 +529,7 @@ export default function Home() {
         </div>
 
         <div className="w-full bg-[#000000] p-4 flex items-center justify-center">
-          <h1 className="text-[#808080] text-sm font-semibold ">
+          <h1 className="text-[#808080] md:text-sm text-xs font-semibold ">
             GADJAHFEST2023 - #HIDUPBERDAMPINGAN
           </h1>
         </div>

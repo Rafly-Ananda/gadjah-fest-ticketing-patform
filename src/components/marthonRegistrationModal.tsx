@@ -37,6 +37,8 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
         onOpenChange={onOpenChange}
         isDismissable={false}
         scrollBehavior="inside"
+        placement="center"
+        size="md"
       >
         <ModalContent>
           {(onClose) => (
@@ -197,7 +199,6 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Informasi tambahan"
                   labelPlacement="outside"
                   placeholder="Masukkan informasi tambahan"
-                  className="max-w-xs"
                   value={marathonDetail?.additionalInformation}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
@@ -209,7 +210,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
               </ModalBody>
               <ModalFooter>
                 <Button
-                  color="primary"
+                  className="bg-[#0a6c72] text-white"
                   onPress={async () => {
                     await handleBooking();
                     onClose();

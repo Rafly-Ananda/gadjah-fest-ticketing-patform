@@ -26,6 +26,7 @@
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.12",
     "framer-motion": "^10.15.0",
+    "hamburger-react": "^2.5.0",
     "next": "13.4.12",
     "nodemailer": "^6.9.4",
     "playwright": "^1.36.2",

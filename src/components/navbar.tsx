@@ -3,24 +3,44 @@ import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { menus } from "@/statics/statics";
 import CheckTicketModal from "./checkTicketModal";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useDisclosure } from "@nextui-org/react";
+import Hamburger from "hamburger-react";
 
 const Navbar: FC<any> = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [bookingCode, setBookingCode] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
+  const [isIntersecting, setIstersecting] = useState<boolean>(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   const navigateToTicketDetails = async (cb: any) => {
     router.push(`/invoice/${bookingCode}`);
+    setIsNavOpen(false);
     setTimeout(() => {
       cb();
     }, 500);
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver((e) => {
+      setIstersecting(e[0].isIntersecting);
+    });
+
+    if (document.getElementById("hero")) {
+      observer.observe(document.getElementById("hero"));
+    }
+
+    setIsNavOpen(false);
+  }, [pathname]);
+
   return (
-    <nav className="fixed flex flex-col items-center justify-between transparent p-4 z-10 w-full">
+    <nav
+      className={`fixed flex flex-col items-center justify-between ${
+        isIntersecting ? "bg-transparent" : "bg-[#0a6c72]"
+      }  p-4 z-10 w-full`}
+    >
       <CheckTicketModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -28,8 +48,8 @@ const Navbar: FC<any> = () => {
         setBookingCode={setBookingCode}
         navigateToTicketDetails={navigateToTicketDetails}
       />
-      <div className="flex w-3/4 items-center justify-between ">
-        <div className="flex items-center justify-center gap-8">
+      <div className="flex md:w-3/4 w-full items-center justify-between ">
+        <div className="flex items-center justify-center  gap-8">
           <Image
             src="/logo.png"
             alt="logo"
@@ -37,14 +57,15 @@ const Navbar: FC<any> = () => {
             height="0"
             sizes="100vw"
             priority={true}
-            className="h-auto w-[100px]"
+            className="h-auto md:w-[100px] w-[70px]"
           />
-          <ul className="flex flex-row items-center justify-center gap-14 ">
+
+          <ul className="hidden md:flex flex-row items-center justify-center gap-14 ">
             {menus.map((e, i: number) => (
               <a
                 key={i}
                 href={e.href}
-                className="group relative font-medium text-white no-underline"
+                className={`group relative font-medium text-white no-underline`}
               >
                 {e.name}
                 <span className="absolute bottom-0 left-0 h-[3px] w-full scale-x-0 transform bg-[#fdcf00] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
@@ -52,9 +73,35 @@ const Navbar: FC<any> = () => {
             ))}
           </ul>
         </div>
+        <div
+          className={`flex items-center justify-center flex-col gap-5 w-screen h-screen bg-transparent backdrop-blur-md absolute inset-0 ${
+            isNavOpen ? "block" : "hidden"
+          }`}
+        >
+          {menus.map((e, i: number) => (
+            <a
+              key={i}
+              href={e.href}
+              className="group relative font-medium text-white no-underline"
+            >
+              {e.name}
+            </a>
+          ))}
+          <button className=" text-white font-medium" onClick={onOpen}>
+            Cek Tiket
+          </button>
+        </div>
 
+        <div className="block lg:hidden z-10">
+          <Hamburger
+            toggled={isNavOpen}
+            toggle={setIsNavOpen}
+            direction="left"
+            color="#ffffff"
+          />
+        </div>
         <button
-          className="rounded-lg bg-[#ffffff] w-fit h-fit p-4 text-xs font-medium
+          className="hidden md:block rounded-lg bg-[#ffffff] w-fit h-fit p-4 text-xs font-medium
     tracking-widest hover:bg-[#fdcf00] hover:text-white"
           onClick={onOpen}
         >
