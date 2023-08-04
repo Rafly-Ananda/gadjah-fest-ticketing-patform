@@ -7,6 +7,7 @@ import QRCode from "qrcode";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import PaidBookingTemplate from "@/emails-utils/paidBookingTemplate";
+import axios from "axios";
 
 const prisma = new PrismaClient();
 
@@ -161,6 +162,15 @@ export async function POST(
         console.log("PASS 3");
 
         // ** 4  generate pdf to S3
+        await axios.get(
+          `https://vercel-pdf-generator.vercel.app/api?bookingId=${updateBooking.id}&url=https://www.gadjahfest.com/invoice/${updateBooking.generatedBookingCode}`,
+        );
+
+        NextResponse.json({
+          status: "Finish generating pdf and saving to S3...",
+        }, {
+          status: 201,
+        });
         // await generatePdf(
         //   updateBooking.id,
         //   `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
@@ -212,9 +222,9 @@ export async function POST(
           subject: "Konfirmasi Pemesanan Gadjah Fest 2023",
           bookingId: updateBooking.generatedBookingCode,
           firstName: updateBooking.user.firstName,
-          // attachmentLink:
-          //   `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
-          attachmentLink: "",
+          attachmentLink:
+            `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
+
           tickets: [...purchasedTickets],
         });
 
