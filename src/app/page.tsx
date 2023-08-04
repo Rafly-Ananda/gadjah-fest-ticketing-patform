@@ -14,6 +14,7 @@ import {
   MarathonDetailType,
 } from "@/interfaces";
 import BookingConfirmationModal from "@/components/bookingConfirmationModal";
+import { Card, Skeleton } from "@nextui-org/react";
 
 const supportedByImageLink = [
   "CoinFolks.png",
@@ -64,6 +65,7 @@ export default function Home() {
     bookingCode: "",
     invoiceUrl: "",
   });
+  const items = [1, 2, 3];
 
   const [festivalTicketBooking, setFestivalTicketBooking] = useState({
     dayOnePass: {
@@ -328,62 +330,79 @@ export default function Home() {
         <div className="flex flex-col items-center gap-8 md:w-3/5 lg:w-3/5 w-full p-2 md:p-0">
           <h1 className="text-lg font-medium">Tiket Festival</h1>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-            {festivalTicket &&
-              festivalTicket.map((e) => (
-                <div
-                  key={e.id}
-                  className="h-[180px] w-[300px] bg-[#d9d9d9] rounded-md flex items-start p-4 gap-4"
-                >
-                  <div className="flex flex-col items-center justify-center">
-                    <p className="text-xs text-[#0a6c72] font-medium">AUG</p>
-                    <p className="text-lg font-bold">12</p>
-                  </div>
+            {festivalTicket.length > 0
+              ? festivalTicket.map((e) => (
+                  <div
+                    key={e.id}
+                    className="h-[180px] w-[300px] bg-[#d9d9d9] rounded-md flex items-start p-4 gap-4"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <p className="text-xs text-[#0a6c72] font-medium">AUG</p>
+                      <p className="text-lg font-bold">12</p>
+                    </div>
 
-                  <div className="h-full flex flex-col items-start gap-5">
-                    <p className="text-xs font-medium">{e.name}</p>
-                    {/* <p className="text-xs text-[#6a6a6a]">{e.description}</p> */}
-                    <p className="text-xs text-[#6a6a6a]">
-                      We will get you directly seated and inside for you to
-                      enjoy the show.
-                    </p>
-
-                    <div className="flex w-full items-center justify-center gap-2">
-                      <button
-                        className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
-                        onClick={() => decreaseBookingQuantity(e)}
-                      >
-                        -
-                      </button>
-                      <p>
-                        {e.name === "Day One Pass"
-                          ? festivalTicketBooking.dayOnePass.quantity
-                          : e.name === "Day Two Pass"
-                          ? festivalTicketBooking.dayTwoPass.quantity
-                          : festivalTicketBooking.budlePass.quantity}
+                    <div className="h-full flex flex-col items-start gap-5">
+                      <p className="text-xs font-medium">{e.name}</p>
+                      {/* <p className="text-xs text-[#6a6a6a]">{e.description}</p> */}
+                      <p className="text-xs text-[#6a6a6a]">
+                        We will get you directly seated and inside for you to
+                        enjoy the show.
                       </p>
-                      <button
-                        className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
-                        onClick={() => addBookingQuantity(e)}
-                      >
-                        +
-                      </button>
+
+                      <div className="flex w-full items-center justify-center gap-2">
+                        <button
+                          className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
+                          onClick={() => decreaseBookingQuantity(e)}
+                        >
+                          -
+                        </button>
+                        <p>
+                          {e.name === "Day One Pass"
+                            ? festivalTicketBooking.dayOnePass.quantity
+                            : e.name === "Day Two Pass"
+                            ? festivalTicketBooking.dayTwoPass.quantity
+                            : festivalTicketBooking.budlePass.quantity}
+                        </p>
+                        <button
+                          className="bg-[#ffffff] w-[20px] h-[20px] border-2 border-[#0a6c72] flex items-center justify-center"
+                          onClick={() => addBookingQuantity(e)}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              : items.map((e, i) => (
+                  <Card
+                    key={i}
+                    className="h-[180px] w-[300px] bg-[#d9d9d9] space-y-5 p-4"
+                  >
+                    <Skeleton className="rounded-lg">
+                      <div className="h-24 rounded-lg bg-default-300"></div>
+                    </Skeleton>
+                    <div className="space-y-3">
+                      <Skeleton className="w-3/5 rounded-lg">
+                        <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                      </Skeleton>
+                      <Skeleton className="w-4/5 rounded-lg">
+                        <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                      </Skeleton>
+                      <Skeleton className="w-2/5 rounded-lg">
+                        <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                      </Skeleton>
+                    </div>
+                  </Card>
+                ))}
           </div>
-          {/* <button
-            className="bg-[#0a6c72] hover:bg-[#08555a] m-2 p-2 rounded-lg text-white"
-            onClick={handleBooking}
-          >
-            Checkout
-          </button> */}
-          <Button
-            onPress={onOpen}
-            className="bg-[#0a6c72] hover:bg-[#08555a] text-white w-[300px]"
-          >
-            Checkout
-          </Button>
+          {festivalTicket.length > 0 && (
+            <Button
+              onPress={onOpen}
+              className="bg-[#0a6c72] hover:bg-[#08555a] text-white w-[300px]"
+            >
+              Checkout
+            </Button>
+          )}
         </div>
       </div>
 
@@ -399,44 +418,59 @@ export default function Home() {
             </h2>
           </div>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-            {marathonTicker &&
-              marathonTicker.map((e, i) => (
-                <div
-                  key={i}
-                  className="h-[180px] w-[300px] bg-[#d9d9d9] rounded-md flex items-start p-4 gap-4"
-                >
-                  <div className="flex flex-col items-center justify-center">
-                    <p className="text-xs text-[#0a6c72] font-medium">KM</p>
-                    <p className="text-lg font-bold">{parseInt(e.name)}</p>
-                  </div>
+            {marathonTicker.length > 0
+              ? marathonTicker.map((e, i) => (
+                  <div
+                    key={i}
+                    className="h-[180px] w-[300px] bg-[#d9d9d9] rounded-md flex items-start p-4 gap-4"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <p className="text-xs text-[#0a6c72] font-medium">KM</p>
+                      <p className="text-lg font-bold">{parseInt(e.name)}</p>
+                    </div>
 
-                  <div className="h-full flex flex-col items-start gap-5">
-                    <p className="text-xs font-medium">{e.name}</p>
-                    <p className="text-xs text-[#6a6a6a]">
-                      We will get you directly seated and inside for you to
-                      enjoy the show.
-                    </p>
+                    <div className="h-full flex flex-col items-start gap-5">
+                      <p className="text-xs font-medium">{e.name}</p>
+                      <p className="text-xs text-[#6a6a6a]">
+                        We will get you directly seated and inside for you to
+                        enjoy the show.
+                      </p>
 
-                    <div className="flex w-full items-center justify-center gap-2">
-                      {/* <button
-                        className="bg-[#ffffff] text-[#0a6c72] rounded-lg px-2 border border-[#0a6c72] flex items-center justify-center text-xs"
-                        onClick={() => router.push(`/marathon/${e.id}`)}
-                      >
-                        Registrasi
-                      </button> */}
-                      <Button
-                        onPress={() => {
-                          onOpenMarathon();
-                          setSelectedMarathon(e.id);
-                        }}
-                        className="bg-[#ffffff] text-[#0a6c72] rounded-lg px-2 border border-[#0a6c72] flex items-center justify-center text-xs"
-                      >
-                        Registrasi
-                      </Button>
+                      <div className="flex w-full items-center justify-center gap-2">
+                        <Button
+                          onPress={() => {
+                            onOpenMarathon();
+                            setSelectedMarathon(e.id);
+                          }}
+                          className="bg-[#ffffff] text-[#0a6c72] rounded-lg px-2 border border-[#0a6c72] flex items-center justify-center text-xs"
+                        >
+                          Registrasi
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              : items.map((e, i) => (
+                  <Card
+                    key={i}
+                    className="h-[180px] w-[300px] bg-[#d9d9d9] space-y-5 p-4"
+                  >
+                    <Skeleton className="rounded-lg">
+                      <div className="h-24 rounded-lg bg-default-300"></div>
+                    </Skeleton>
+                    <div className="space-y-3">
+                      <Skeleton className="w-3/5 rounded-lg">
+                        <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                      </Skeleton>
+                      <Skeleton className="w-4/5 rounded-lg">
+                        <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                      </Skeleton>
+                      <Skeleton className="w-2/5 rounded-lg">
+                        <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                      </Skeleton>
+                    </div>
+                  </Card>
+                ))}
           </div>
         </div>
       </div>
