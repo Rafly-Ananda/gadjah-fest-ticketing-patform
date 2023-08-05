@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { uploadQRCodetoS3 } from "@/utils/s3Init";
 import { PurchasedTicket, TicketStatus } from "@prisma/client";
-import { generatePdf } from "@/utils/playwrightInit";
 import QRCode from "qrcode";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
@@ -115,9 +114,6 @@ export async function POST(
               masterTicketId: updateBooking.bookingDetails[i].masterTicketId,
               ticketStatus: "VALID" as TicketStatus,
               bookingId: updateBooking.bookingDetails[i].bookingId,
-              marathonDetail: body.marathonDetail !== null
-                ? body.marathonDetail
-                : "",
             });
           }
         }
@@ -136,7 +132,9 @@ export async function POST(
 
         // ** 3 Save to S3
         for (const ticket of generatedTickets) {
-          const qrCode = await generateQR(JSON.stringify(ticket));
+          const qrCode = await generateQR(
+            `https://www.gadjahfest.com/validate/${ticket.id}`,
+          );
           const base64Img = new (Buffer as any).from(
             qrCode?.replace(/^data:image\/\w+;base64,/, ""),
             "base64",

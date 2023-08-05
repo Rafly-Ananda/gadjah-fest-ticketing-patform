@@ -37,10 +37,12 @@ const Navbar: FC<any> = () => {
   return (
     <nav
       className={`fixed flex flex-col items-center justify-between ${
-        isIntersecting
+        isIntersecting && pathname === "/"
           ? "bg-transparent"
           : "bg-gradient-to-b from-[#0a6c72] to-transparent"
-      }  md:p-4 px-7 py-4 w-full z-50`}
+      }  md:p-4 px-7 py-4 w-full z-50 ${
+        pathname.includes("admin") && "bg-[#0a6c72]"
+      } ${pathname.includes("invoice") && "bg-[#0a6c72]"}`}
     >
       <CheckTicketModal
         isOpen={isOpen}
@@ -52,7 +54,7 @@ const Navbar: FC<any> = () => {
       <div className="flex md:w-3/4 w-full items-center justify-between ">
         <div className="flex items-center justify-center gap-8">
           <Image
-            src="/logo.png"
+            src="/logo-alternate.png"
             alt="logo"
             width="0"
             height="0"

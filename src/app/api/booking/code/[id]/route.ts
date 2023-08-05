@@ -12,6 +12,7 @@ export async function GET(
         generatedBookingCode: params.id,
       },
       select: {
+        id: true,
         generatedBookingCode: true,
         bookingStatus: true,
         purchasedTickets: {
@@ -21,6 +22,14 @@ export async function GET(
                 name: true,
               },
             },
+          },
+        },
+        user: {
+          select: {
+            email: true,
+            firstName: true,
+            lastName: true,
+            mobileNumber: true,
           },
         },
       },

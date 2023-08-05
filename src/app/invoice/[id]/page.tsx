@@ -4,11 +4,25 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { PROJECT_HOST } from "@/config";
 
+interface UserDataType {
+  email: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+}
+
 export default function Page({ params }: { params: { id: string } }) {
   const [tickets, setTickets] = useState([]);
   const [bookingStatus, setBookingStatus] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<string>("");
+  const [user, setUser] = useState<UserDataType>({
+    email: "",
+    firstName: "",
+    lastName: "",
+    mobileNumber: "",
+  });
+  // const [userData, setUserData] = useState;
 
   useEffect(() => {
     setIsLoading(true);
@@ -17,6 +31,12 @@ export default function Page({ params }: { params: { id: string } }) {
         `${PROJECT_HOST}/api/booking/code/${params.id}`
       );
 
+      setUser({
+        email: data.booking.user.email,
+        firstName: data.booking.user.firstName,
+        lastName: data.booking.user.lastName,
+        mobileNumber: data.booking.user.mobileNumber,
+      });
       setMessage(data.message);
       setBookingStatus(data.booking.bookingStatus);
       if (data.booking.length !== 0) {
@@ -85,6 +105,9 @@ export default function Page({ params }: { params: { id: string } }) {
     <main className="pt-28 md:pt-32">
       <div className="flex flex-col gap-4 items-center justify-center pt-2">
         <h1 className="text-lg font-semibold">Electronic Ticket</h1>
+        <h1>
+          {user.firstName} {user.lastName} - {user.email} - {user.mobileNumber}
+        </h1>
         {tickets &&
           tickets.map((e: any, i) => (
             <div
@@ -94,7 +117,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <QRCode
                 size={256}
                 style={{ height: "auto", maxWidth: "15%", width: "15%" }}
-                value={e.id}
+                value={`https://www.gadjahfest.com/validate/${e.id}`}
                 viewBox={`0 0 256 256`}
               />
               <div className="flex items-start justity-center">

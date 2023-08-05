@@ -51,7 +51,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Marathon Registartion
+                Marathon Registration
               </ModalHeader>
               <ModalBody>
                 <Image
