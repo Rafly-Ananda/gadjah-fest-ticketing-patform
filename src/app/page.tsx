@@ -742,7 +742,7 @@ export default function Home() {
 
                     {e.name === "7 Km Marathon Pass" ? (
                       <Image
-                        src="/7 Km Marathon Pass.png"
+                        src="/7 Km Range Marathon Pass.png"
                         alt="logo"
                         width="0"
                         height="0"
@@ -752,7 +752,7 @@ export default function Home() {
                       />
                     ) : (
                       <Image
-                        src="/21 Km Marathon Pass.png"
+                        src="/21 Km Range Marathon Pass.png"
                         alt="logo"
                         width="0"
                         height="0"
@@ -809,10 +809,10 @@ export default function Home() {
             Lampung = Little Indonesia
           </h1>
 
-          {/* <Map /> */}
+          <Map />
 
           <a href="https://www.google.com/maps/place/Gadjah+Fest/@-5.182838,105.78751,15z/data=!4m2!3m1!1s0x0:0xcfd1f46ae0bb31ec?sa=X&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhDEAA&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhNEAM">
-            <p className="text-sm font-semibold">
+            <p className="text-sm font-semibold underline">
               Lokasi: Jln Dugul, Desa Braja Harjosari, Lampung Timur
             </p>
           </a>
