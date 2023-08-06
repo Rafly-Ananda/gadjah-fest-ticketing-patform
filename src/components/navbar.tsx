@@ -85,12 +85,12 @@ const Navbar: FC<any> = () => {
             <a
               key={i}
               href={e.href}
-              className="group relative font-medium text-white no-underline"
+              className="group relative font-medium text-[#0a6c72] no-underline"
             >
               {e.name}
             </a>
           ))}
-          <button className=" text-white font-medium" onClick={onOpen}>
+          <button className="text-[#0a6c72] font-medium" onClick={onOpen}>
             Cek Tiket
           </button>
         </div>

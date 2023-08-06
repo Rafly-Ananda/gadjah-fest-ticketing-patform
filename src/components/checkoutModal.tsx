@@ -55,6 +55,7 @@ const CheckoutModal: FC<ComponentProps> = ({
                   placeholder="Masukkan email"
                   variant="bordered"
                   value={buyerData?.email}
+                  isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({ ...prev, email: e.target.value }))
                   }
@@ -65,6 +66,7 @@ const CheckoutModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
                   value={buyerData?.firstName}
+                  isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
                       ...prev,
@@ -78,6 +80,7 @@ const CheckoutModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
                   value={buyerData?.lastName}
+                  isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
                       ...prev,
@@ -91,6 +94,7 @@ const CheckoutModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
                   value={buyerData?.mobileNumber}
+                  isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
                       ...prev,

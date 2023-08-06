@@ -82,7 +82,7 @@ export default function Page() {
       <div className="flex flex-col gap-4 items-center justify-center pt-2">
         <div className="w-3/4 flex items-center justify-center border border-[#0a6c72] p-16 rounded-lg">
           <button
-            className="hidden md:block rounded-lg bg-[#0a6c72] w-fit h-fit p-4 text-xs font-medium
+            className=" rounded-lg bg-[#0a6c72] w-fit h-fit p-4 text-xs font-medium
     tracking-widest text-white"
             onClick={onOpen}
           >
