@@ -17,6 +17,7 @@ import { Card, Skeleton } from "@nextui-org/react";
 import dynamic from "next/dynamic";
 import ConfirmationModal from "@/components/confirmationModal";
 import FestivalConfirmationModal from "@/components/festivalConfirmationModal";
+import KiteRegistrationModal from "@/components/kiteRegistrationModal";
 
 const Map = dynamic(() => import("../components/leafletMap"), {
   ssr: false,
@@ -73,6 +74,10 @@ interface BookingDetailsRespond {
   bookingCode: string;
 }
 
+interface kiteTicketInterface {
+  name: string;
+}
+
 export default function Home() {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const {
@@ -80,6 +85,12 @@ export default function Home() {
     onOpen: onOpenMarathon,
     onOpenChange: onOpenChangeMarathon,
     onClose: onCloseMarathon,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenKiteRegistration,
+    onOpen: onOpenKiteRegistration,
+    onOpenChange: onOpenChangeKiteRegistration,
+    onClose: onCloseKiteRegistration,
   } = useDisclosure();
   const {
     isOpen: bookingConfirmIsOpen,
@@ -123,6 +134,8 @@ export default function Home() {
       quantity: 0,
     },
   });
+
+  const [kiteTicketBooking, setKiteTicketBooking] = useState<Ticket[]>([]);
 
   const [buyerData, setBuyerData] = useState<buyerDataType>({
     email: "",
@@ -232,8 +245,10 @@ export default function Home() {
               return { ...prev, budlePass: { id: e.id, quantity: 0 } };
             }
           });
-        } else {
+        } else if (e.type === "marathon") {
           setMarathonTicket((prev) => [...prev, e]);
+        } else {
+          setKiteTicketBooking((prev) => [...prev, e]);
         }
       });
     } catch (e) {
@@ -313,6 +328,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setKiteTicketBooking([]);
     setFestivalTicket([]);
     setMarathonTicket([]);
     setIsBooking(false);
@@ -395,6 +411,14 @@ export default function Home() {
         onClose={onCloseMarathon}
         onOpenConfirm={onOpenConfirm}
       />
+      {/* isOpen,
+  onOpenChange,
+  buyerData,
+  setBuyerData,
+  isBooking,
+  onClose,
+  onOpenConfirm, */}
+      {/* <KiteRegistrationModal isOpen={isOpenKiteRegistration} onOpenChange={onOpenChangeKiteRegistration} onClose={onCloseKiteRegistration} /> */}
       <BookingConfirmationModal
         isOpen={bookingConfirmIsOpen}
         onOpenChange={bookingConfirmOnOpenChange}
@@ -578,6 +602,109 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Registrasi Layang-layang */}
+      {/* <div className="flex items-center justify-center w-full pt-5">
+        <div className="flex flex-col items-center gap-8 md:w-3/5 lg:w-3/5 w-full p-2 md:p-0">
+          <h1 className="text-lg font-medium">Registrasi Layang-Layang</h1>
+
+          <div className=" flex flex-col items-center justify-center">
+            <h2 className="text-xs">TANGGAL LOMBA</h2>
+            <h2 className="font-semibold flex items-center gap-1">
+              Sabtu, <span className="text-3xl">12 - 13</span> Agustus 2023
+            </h2>
+          </div>
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+            {kiteTicketBooking.length > 0
+              ? kiteTicketBooking.map((e, i) => (
+                  <div
+                    key={e.id}
+                    className="h-[180px] w-[300px] bg-[#0a6c72] rounded-md flex items-start justify-center p-4 gap-4 flex-col text-white "
+                  >
+                    <div className="flex flex-row gap-5 items-center justify-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <p className="text-xs text-white font-medium">AUG</p>
+                        {e.name === "Anak-Anak" ? (
+                          <p className="text-lg font-bold">12</p>
+                        ) : (
+                          <div className="text-lg font-bold">
+                            <p>12</p>
+                            <div className="h-[2px] w-full bg-white"></div>
+                            <p>13</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="h-full flex flex-col items-start">
+                        <p className="text-xs font-bold">
+                          Layang-layang {e.name}
+                        </p>
+                        <div className="flex w-full gap-2">
+                          {e.price === 0 ? (
+                            <p className="text-xs font-semibold">Gratis</p>
+                          ) : (
+                            <p className="text-xs font-semibold">
+                              RP {e.price.toString().slice(0, 2)}.
+                              {e.price.toString().slice(2)},-
+                            </p>
+                          )}
+
+                          {e.name === "Day One and Two Bundle Pass" && (
+                            <Image
+                              src="/hot-deals.png"
+                              alt="logo"
+                              width="0"
+                              height="0"
+                              sizes="100vw"
+                              priority={true}
+                              className="block w-[35px] h-[15px]"
+                            />
+                          )}
+                        </div>
+
+                        <p className="text-xs">{e.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex w-full items-center justify-center gap-2">
+                      <div className="flex w-full items-center justify-center gap-2">
+                        <Button
+                          onPress={() => {
+                            // onOpenMarathon();
+                            // setSelectedMarathon(e.id);
+                          }}
+                          className="bg-[#ffffff] text-[#0a6c72] rounded-2xl  border border-[#0a6c72] flex items-center justify-center text-xs"
+                        >
+                          Registrasi
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              : items.map((e, i) => (
+                  <Card
+                    key={i}
+                    className="h-[180px] w-[300px] bg-[#d9d9d9] space-y-5 p-4"
+                  >
+                    <Skeleton className="rounded-lg">
+                      <div className="h-24 rounded-lg bg-default-300"></div>
+                    </Skeleton>
+                    <div className="space-y-3">
+                      <Skeleton className="w-3/5 rounded-lg">
+                        <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                      </Skeleton>
+                      <Skeleton className="w-4/5 rounded-lg">
+                        <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                      </Skeleton>
+                      <Skeleton className="w-2/5 rounded-lg">
+                        <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                      </Skeleton>
+                    </div>
+                  </Card>
+                ))}
+          </div>
+        </div>
+      </div> */}
+
       {/* Registrasi Marathon */}
       <div className="flex items-center justify-center w-full pt-5">
         <div className="flex flex-col items-center gap-8 md:w-3/5 lg:w-3/5 w-full p-2 md:p-0">
@@ -604,8 +731,8 @@ export default function Home() {
 
                       <div className="h-full flex flex-col items-start">
                         <p className="text-xs font-medium">
-                          RP {e.price.toString().slice(0, 3)}.
-                          {e.price.toString().slice(3)},-
+                          RP {e.price.toString().slice(0, 2)}.
+                          {e.price.toString().slice(2)},-
                         </p>
                         <p className="text-xs text-white">{e.description}</p>
                       </div>

@@ -55,7 +55,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
               </ModalHeader>
               <ModalBody>
                 <Image
-                  src="/half-marathon-popup.png"
+                  src="/half-marathon-popup.jpg"
                   alt="logo"
                   width="0"
                   height="0"
