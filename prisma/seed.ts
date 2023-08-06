@@ -7,11 +7,10 @@ async function main() {
     update: {},
     create: {
       name: "Day One Pass",
-      type: "Event Pass",
+      type: "festival",
       quantity: 200,
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
-      price: 120000,
+      description: "Open Gate, 05:30 | Close Gate, 14:00",
+      price: 20000,
       published: true,
     },
   });
@@ -20,11 +19,10 @@ async function main() {
     update: {},
     create: {
       name: "Day Two Pass",
-      type: "Event Pass",
+      type: "festival",
       quantity: 200,
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
-      price: 120000,
+      description: "Open Gate, 05:30 | Close Gate, 14:00",
+      price: 20000,
       published: true,
     },
   });
@@ -33,11 +31,10 @@ async function main() {
     update: {},
     create: {
       name: "Day One and Two Bundle Pass",
-      type: "Marathon Pass",
+      type: "festival",
       quantity: 200,
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
-      price: 120000,
+      description: "Open Gate, 05:30 | Close Gate, 14:00",
+      price: 36000,
       published: true,
     },
   });
@@ -45,12 +42,12 @@ async function main() {
     where: { id: "" },
     update: {},
     create: {
-      name: "1 Km Marathon Pass",
-      type: "Marathon Pass",
+      name: "7 Km Marathon Pass",
+      type: "marathon",
       quantity: 200,
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
-      price: 120000,
+        "Jersey, Medali, & Tiket Gadjah Fest (Day Pass, Hari ke-1 dan ke-2)",
+      price: 65000,
       published: true,
     },
   });
@@ -58,25 +55,12 @@ async function main() {
     where: { id: "" },
     update: {},
     create: {
-      name: "10 Km Marathon Pass",
-      type: "Marathon Pass",
-      quantity: 200,
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
-      price: 120000,
-      published: true,
-    },
-  });
-  const ticket6 = await prisma.ticket.upsert({
-    where: { id: "" },
-    update: {},
-    create: {
       name: "21 Km Marathon Pass",
-      type: "Marathon Pass",
+      type: "marathon",
       quantity: 200,
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ex dicta quos id facere illum cum ab debitis libero ad? Nostrum quisquam ab iure magni incidunt ad commodi. Alias, libero!",
-      price: 120000,
+        "Jersey, Medali, & Tiket Gadjah Fest (Day Pass, Hari ke-1 dan ke-2)",
+      price: 90000,
       published: true,
     },
   });
