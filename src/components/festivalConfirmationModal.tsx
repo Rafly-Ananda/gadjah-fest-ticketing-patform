@@ -9,12 +9,15 @@ import {
   Button,
   Input,
 } from "@nextui-org/react";
+import { buyerDataType } from "@/interfaces";
 
 interface ComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: any;
   handleFestivalBooking: any;
+  buyerData: buyerDataType;
+  isBooking: boolean;
 }
 
 const FestivalConfirmationModal: FC<ComponentProps> = ({
@@ -22,6 +25,8 @@ const FestivalConfirmationModal: FC<ComponentProps> = ({
   onOpenChange,
   onClose,
   handleFestivalBooking,
+  buyerData,
+  isBooking,
 }) => {
   return (
     <>
@@ -49,6 +54,13 @@ const FestivalConfirmationModal: FC<ComponentProps> = ({
                 <Button
                   className="bg-[#0a6c72] text-white"
                   onPress={handleFestivalBooking}
+                  isLoading={isBooking}
+                  isDisabled={
+                    buyerData.firstName === "" ||
+                    buyerData.lastName === "" ||
+                    buyerData.email === "" ||
+                    buyerData.mobileNumber === ""
+                  }
                 >
                   Ya
                 </Button>

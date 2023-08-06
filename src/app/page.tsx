@@ -297,7 +297,6 @@ export default function Home() {
 
   const handleMarathonRegistartion = async () => {
     setIsBooking(true);
-
     try {
       const bookingPayload = {
         user: {
@@ -384,12 +383,15 @@ export default function Home() {
         onOpenChange={onOpenChangeConfirmFestival}
         onClose={onCloseConfirmFestival}
         handleFestivalBooking={handleBooking}
+        buyerData={buyerData}
+        isBooking={isBooking}
       />
       <ConfirmationModal
         isOpen={isOpenConfirm}
         onOpenChange={onOpenChangeConfirm}
         onClose={onCloseConfirm}
         handleMarathonBooking={handleMarathonRegistartion}
+        isBooking={isBooking}
       />
       <CheckoutModal
         isOpen={isOpen}
@@ -807,7 +809,7 @@ export default function Home() {
             Lampung = Little Indonesia
           </h1>
 
-          <Map />
+          {/* <Map /> */}
 
           <a href="https://www.google.com/maps/place/Gadjah+Fest/@-5.182838,105.78751,15z/data=!4m2!3m1!1s0x0:0xcfd1f46ae0bb31ec?sa=X&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhDEAA&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhNEAM">
             <p className="text-sm font-semibold">

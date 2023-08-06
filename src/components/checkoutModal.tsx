@@ -25,7 +25,6 @@ interface ComponentProps {
 const CheckoutModal: FC<ComponentProps> = ({
   isOpen,
   onOpenChange,
-  handleBooking,
   buyerData,
   setBuyerData,
   isBooking,
@@ -102,12 +101,22 @@ const CheckoutModal: FC<ComponentProps> = ({
                     }))
                   }
                 />
+                <h1 className="text-sm">
+                  <strong>Note:</strong> Pastikan email benar, tiket akan
+                  dikirimkan melalui email tersebut.
+                </h1>
               </ModalBody>
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
                   onPress={onOpenConfirm}
                   isLoading={isBooking ? true : false}
+                  isDisabled={
+                    buyerData?.firstName === "" ||
+                    buyerData?.lastName === "" ||
+                    buyerData?.email === "" ||
+                    buyerData?.mobileNumber === ""
+                  }
                 >
                   Pesan
                 </Button>

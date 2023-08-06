@@ -15,6 +15,7 @@ interface ComponentProps {
   onOpenChange: () => void;
   onClose: any;
   handleMarathonBooking: any;
+  isBooking: boolean;
 }
 
 const ConfirmationModal: FC<ComponentProps> = ({
@@ -22,6 +23,7 @@ const ConfirmationModal: FC<ComponentProps> = ({
   onOpenChange,
   onClose,
   handleMarathonBooking,
+  isBooking,
 }) => {
   return (
     <>
@@ -49,6 +51,7 @@ const ConfirmationModal: FC<ComponentProps> = ({
                 <Button
                   className="bg-[#0a6c72] text-white"
                   onPress={handleMarathonBooking}
+                  isLoading={isBooking}
                 >
                   Ya
                 </Button>

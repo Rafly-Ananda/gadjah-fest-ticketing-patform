@@ -69,6 +69,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan email"
                   variant="bordered"
                   value={marathonDetail?.user.email}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -82,6 +83,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
                   value={marathonDetail?.user.firstName}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -95,6 +97,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
                   value={marathonDetail?.user.lastName}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -108,6 +111,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
                   value={marathonDetail?.user.mobileNumber}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -153,6 +157,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan email"
                   variant="bordered"
                   value={marathonDetail?.contactInformation.email}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -169,6 +174,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
                   value={marathonDetail?.contactInformation.firstName}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -185,6 +191,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
                   value={marathonDetail?.contactInformation.lastName}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -201,6 +208,7 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
                   value={marathonDetail?.contactInformation.mobileNumber}
+                  isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
                       ...prev,
@@ -223,12 +231,26 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                     }))
                   }
                 />
+                <h1 className="text-sm">
+                  <strong>Note:</strong> Pastikan email benar, tiket akan
+                  dikirimkan melalui email tersebut.
+                </h1>
               </ModalBody>
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
                   onPress={onOpenConfirm}
                   isLoading={isBooking ? true : false}
+                  isDisabled={
+                    marathonDetail?.user.firstName === "" ||
+                    marathonDetail?.user.lastName === "" ||
+                    marathonDetail?.user.email === "" ||
+                    marathonDetail?.user.mobileNumber === "" ||
+                    marathonDetail?.contactInformation.email === "" ||
+                    marathonDetail?.contactInformation.firstName === "" ||
+                    marathonDetail?.contactInformation.lastName === "" ||
+                    marathonDetail?.contactInformation.mobileNumber === ""
+                  }
                 >
                   Pesan
                 </Button>

@@ -257,58 +257,58 @@ export async function POST(
       }
     }
 
-    if (body.status === "EXPIRED") {
-      // 1 Update booking status
-      const updateBooking = await prisma.booking.update({
-        where: {
-          id: body.external_id,
-        },
-        data: {
-          bookingStatus: "EXPIRED",
-          payment: {
-            update: {
-              where: {
-                bookingId: body.external_id,
-              },
-              data: {
-                status: "EXPIRED",
-              },
-            },
-          },
-          bookingDetails: {
-            updateMany: {
-              where: {
-                bookingId: body.external_id,
-              },
-              data: {
-                itemStatus: "REVOKED",
-              },
-            },
-          },
-        },
-        include: {
-          bookingDetails: {
-            where: {
-              bookingId: body.external_id,
-            },
-          },
-        },
-      });
+    // if (body.status === "EXPIRED") {
+    //   // 1 Update booking status
+    //   const updateBooking = await prisma.booking.update({
+    //     where: {
+    //       id: body.external_id,
+    //     },
+    //     data: {
+    //       bookingStatus: "EXPIRED",
+    //       payment: {
+    //         update: {
+    //           where: {
+    //             bookingId: body.external_id,
+    //           },
+    //           data: {
+    //             status: "EXPIRED",
+    //           },
+    //         },
+    //       },
+    //       bookingDetails: {
+    //         updateMany: {
+    //           where: {
+    //             bookingId: body.external_id,
+    //           },
+    //           data: {
+    //             itemStatus: "REVOKED",
+    //           },
+    //         },
+    //       },
+    //     },
+    //     include: {
+    //       bookingDetails: {
+    //         where: {
+    //           bookingId: body.external_id,
+    //         },
+    //       },
+    //     },
+    //   });
 
-      return NextResponse.json({
-        status: "Success",
-        message: "Payment expired",
-        detail: {
-          id: updateBooking.id,
-          bookingId: updateBooking.generatedBookingCode,
-          userId: updateBooking.userId,
-          createdAt: updateBooking.createdAt,
-          updatedAt: updateBooking.updatedAt,
-        },
-      }, {
-        status: 200,
-      });
-    }
+    //   return NextResponse.json({
+    //     status: "Success",
+    //     message: "Payment expired",
+    //     detail: {
+    //       id: updateBooking.id,
+    //       bookingId: updateBooking.generatedBookingCode,
+    //       userId: updateBooking.userId,
+    //       createdAt: updateBooking.createdAt,
+    //       updatedAt: updateBooking.updatedAt,
+    //     },
+    //   }, {
+    //     status: 200,
+    //   });
+    // }
   } catch (e) {
     console.log(e);
     if (e instanceof Error) {
