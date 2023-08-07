@@ -169,37 +169,8 @@ export async function POST(
         }, {
           status: 201,
         });
-        // await generatePdf(
-        //   updateBooking.id,
-        //   `${process.env.PROJECT_HOST}/invoice/${updateBooking.generatedBookingCode}`,
-        // );
-
-        // NextResponse.json({
-        //   status: "generating pdf to s3...",
-        // }, {
-        //   status: 201,
-        // });
-
-        // await prisma.booking.update({
-        //   where: {
-        //     id: body.external_id,
-        //   },
-        //   data: {
-        //     invoicePdfUrl:
-        //       `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
-        //   },
-        // });
-
-        // NextResponse.json({
-        //   status: "saving pdf to db...",
-        // }, {
-        //   status: 201,
-        // });
-
-        // console.log("PASS 4");
 
         // ** 5 Send Finish Payment Email
-
         const purchasedTickets = await prisma.purchasedTicket.findMany({
           where: {
             bookingId: updateBooking.id,
@@ -257,58 +228,72 @@ export async function POST(
       }
     }
 
-    // if (body.status === "EXPIRED") {
-    //   // 1 Update booking status
-    //   const updateBooking = await prisma.booking.update({
-    //     where: {
-    //       id: body.external_id,
-    //     },
-    //     data: {
-    //       bookingStatus: "EXPIRED",
-    //       payment: {
-    //         update: {
-    //           where: {
-    //             bookingId: body.external_id,
-    //           },
-    //           data: {
-    //             status: "EXPIRED",
-    //           },
-    //         },
-    //       },
-    //       bookingDetails: {
-    //         updateMany: {
-    //           where: {
-    //             bookingId: body.external_id,
-    //           },
-    //           data: {
-    //             itemStatus: "REVOKED",
-    //           },
-    //         },
-    //       },
-    //     },
-    //     include: {
-    //       bookingDetails: {
-    //         where: {
-    //           bookingId: body.external_id,
-    //         },
-    //       },
-    //     },
-    //   });
+    if (body.status === "EXPIRED") {
+      const selectedBooking = await prisma.booking.findFirst({
+        where: {
+          id: body.external_id,
+        },
+      });
 
-    //   return NextResponse.json({
-    //     status: "Success",
-    //     message: "Payment expired",
-    //     detail: {
-    //       id: updateBooking.id,
-    //       bookingId: updateBooking.generatedBookingCode,
-    //       userId: updateBooking.userId,
-    //       createdAt: updateBooking.createdAt,
-    //       updatedAt: updateBooking.updatedAt,
-    //     },
-    //   }, {
-    //     status: 200,
-    //   });
-    // }
+      if (selectedBooking?.bookingStatus === "PAID") {
+        return NextResponse.json({
+          status: "Success",
+          message: "Booking already paid by self checkout",
+        }, {
+          status: 200,
+        });
+      } else {
+        const updateBooking = await prisma.booking.update({
+          where: {
+            id: body.external_id,
+          },
+          data: {
+            bookingStatus: "EXPIRED",
+            payment: {
+              update: {
+                where: {
+                  bookingId: body.external_id,
+                },
+                data: {
+                  status: "EXPIRED",
+                },
+              },
+            },
+            bookingDetails: {
+              updateMany: {
+                where: {
+                  bookingId: body.external_id,
+                },
+                data: {
+                  itemStatus: "REVOKED",
+                },
+              },
+            },
+          },
+          include: {
+            bookingDetails: {
+              where: {
+                bookingId: body.external_id,
+              },
+            },
+          },
+        });
+
+        return NextResponse.json({
+          status: "Success",
+          message: "Payment expired",
+          detail: {
+            id: updateBooking.id,
+            bookingId: updateBooking.generatedBookingCode,
+            userId: updateBooking.userId,
+            createdAt: updateBooking.createdAt,
+            updatedAt: updateBooking.updatedAt,
+          },
+        }, {
+          status: 200,
+        });
+      }
+    }
   } catch (e) {
     console.log(e);
     if (e instanceof Error) {
