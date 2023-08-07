@@ -164,7 +164,7 @@ export async function POST(
     // ** 5 Create Payment
     await prisma.payment.create({
       data: {
-        amount: 1,
+        amount: xenditInvoiceAmount,
         bookingId: newBooking.id,
         xenditInvoiceId: xenditInvoiceId,
         status: "PENDING",
@@ -179,14 +179,14 @@ export async function POST(
       subject: "Konfirmasi Pembayaran Gadjah Fest 2023",
       bookingId: newBooking.generatedBookingCode,
       firstName: booking.user.firstName,
-      bookingLink: "xenditInvoiceUrl",
+      bookingLink: xenditInvoiceUrl,
     });
 
     return NextResponse.json(
       {
         status: "Success",
         message: "Booking successfuly created",
-        booking: { ...newBooking, invoiceUrl: "xenditInvoiceUrl" },
+        booking: { ...newBooking, invoiceUrl: xenditInvoiceUrl },
       },
       {
         status: 201,
