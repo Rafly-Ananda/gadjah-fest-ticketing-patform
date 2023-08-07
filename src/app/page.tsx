@@ -705,7 +705,7 @@ export default function Home() {
                     <div className="flex flex-row gap-5 items-center justify-center">
                       <div className="flex flex-col items-center justify-center">
                         <p className="text-xs text-white font-medium">AUG</p>
-                        {e.name === "Anak-Anak" ? (
+                        {e.name === "Layangan Anak-Anak" ? (
                           <p className="text-lg font-bold">12</p>
                         ) : (
                           <div className="text-lg font-bold">
