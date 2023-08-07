@@ -715,9 +715,7 @@ export default function Home() {
                       </div>
 
                       <div className="h-full flex flex-col items-start">
-                        <p className="text-xs font-bold">
-                          Layang-layang {e.name}
-                        </p>
+                        <p className="text-xs font-bold">{e.name}</p>
                         <div className="flex w-full gap-2">
                           {e.price === 0 ? (
                             <p className="text-xs font-semibold">Gratis</p>
