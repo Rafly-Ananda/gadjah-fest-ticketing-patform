@@ -97,6 +97,7 @@ export async function POST(
         },
         data: {
           bookingStatus: "PAID",
+          paidMethod: "SELF",
           payment: {
             update: {
               where: {

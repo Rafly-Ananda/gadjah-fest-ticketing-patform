@@ -75,6 +75,7 @@ model Booking {
   invoicePdfUrl String?
   marathonDetail MarathonDetail @relation(fields: [marathonDetailId], references: [id])
   marathonDetailId String @default("")
+  paidMethod PaidMethod @default(XENDIT)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
@@ -136,4 +137,9 @@ enum BookingStatus {
 enum TicketStatus {
   VALID
   INVALID
+}
+
+enum PaidMethod {
+  SELF
+  XENDIT
 }
