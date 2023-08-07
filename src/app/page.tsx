@@ -341,6 +341,7 @@ export default function Home() {
         lastName: "",
         mobileNumber: "",
       });
+      setSelectedKite("");
     } catch (e) {
       console.error(e);
     }
@@ -387,6 +388,7 @@ export default function Home() {
         },
         additionalInformation: "",
       });
+      setSelectedMarathon("");
       return;
     } catch (e) {
       console.log(e);
