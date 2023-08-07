@@ -42,7 +42,9 @@ const Navbar: FC<any> = () => {
           : "bg-gradient-to-b from-[#0a6c72] to-transparent"
       }  md:p-4 px-7 py-4 w-full z-50 ${
         pathname.includes("admin") && "bg-[#0a6c72]"
-      } ${pathname.includes("invoice") && "bg-[#0a6c72]"}`}
+      } ${pathname.includes("invoice") && "bg-[#0a6c72]"} ${
+        pathname.includes("validate") && "bg-[#0a6c72]"
+      }`}
     >
       <CheckTicketModal
         isOpen={isOpen}
