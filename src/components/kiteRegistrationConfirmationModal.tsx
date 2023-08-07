@@ -9,32 +9,31 @@ import {
   Button,
   Input,
 } from "@nextui-org/react";
+import { buyerDataType } from "@/interfaces";
 
 interface ComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: any;
-  bookingCode: string;
-  setBookingCode: React.Dispatch<React.SetStateAction<string>>;
-  onOpenConfirm: any;
-  message: string;
+  handleKiteBooking: any;
+  buyerData: buyerDataType;
+  isBooking: boolean;
 }
 
-const SelfValidateTicketModal: FC<ComponentProps> = ({
+const KiteRegistrationConfirmationModal: FC<ComponentProps> = ({
   isOpen,
   onOpenChange,
   onClose,
-  bookingCode,
-  setBookingCode,
-  onOpenConfirm,
-  message,
+  handleKiteBooking,
+  buyerData,
+  isBooking,
 }) => {
   return (
     <>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        isDismissable={false}
+        isDismissable={true}
         placement="center"
         size="xs"
         onClose={onClose}
@@ -43,27 +42,27 @@ const SelfValidateTicketModal: FC<ComponentProps> = ({
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Validate Booking
+                Kite Booking Confirmation
               </ModalHeader>
               <ModalBody>
-                <Input
-                  autoFocus
-                  label="Kode Booking"
-                  placeholder="Masukkan kode booking"
-                  variant="bordered"
-                  value={bookingCode}
-                  onChange={(e) => setBookingCode((prev) => e.target.value)}
-                />
-                <h1 className="font-semibold text-sm text-red-600">
-                  {message}
-                </h1>
+                <h1>Apakah kamu yakin dengan data yang kamu masukkan?</h1>
               </ModalBody>
               <ModalFooter>
+                <Button className="bg-[#720a0a] text-white" onPress={onClose}>
+                  Tidak
+                </Button>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={onOpenConfirm}
+                  onPress={handleKiteBooking}
+                  isLoading={isBooking}
+                  isDisabled={
+                    buyerData.firstName === "" ||
+                    buyerData.lastName === "" ||
+                    buyerData.email === "" ||
+                    buyerData.mobileNumber === ""
+                  }
                 >
-                  Cek
+                  Ya
                 </Button>
               </ModalFooter>
             </>
@@ -74,4 +73,4 @@ const SelfValidateTicketModal: FC<ComponentProps> = ({
   );
 };
 
-export default SelfValidateTicketModal;
+export default KiteRegistrationConfirmationModal;

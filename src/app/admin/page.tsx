@@ -25,8 +25,10 @@ export default function Page() {
   const [isCodeError, setIsCodeError] = useState<boolean>(false);
   const [codeValue, setCodeValue] = useState<string>("");
   const [isLoading, setisLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   const getBookingDetails = async () => {
+    setMessage("");
     if (codeValue !== "G4dj4hf3st2023") {
       setIsCodeError(true);
       return;
@@ -37,6 +39,20 @@ export default function Page() {
       const { data } = await axios.post(
         `${PROJECT_HOST}/api/booking/self-checkout/${bookingCode}`
       );
+
+      if (data.message === "Booking not found") {
+        setMessage(`Booking dengan id ${bookingCode} tidak ditemukan.`);
+        setisLoading(false);
+        onCloseConfirmation();
+        return;
+      }
+
+      if (data.message === "Booking already paid, skipping ticket generation") {
+        setMessage(`Booking dengan id ${bookingCode} sudah di validasi.`);
+        setisLoading(false);
+        onCloseConfirmation();
+        return;
+      }
 
       console.log(data);
       setisLoading(false);
@@ -49,6 +65,7 @@ export default function Page() {
   };
 
   useEffect(() => {
+    setMessage("");
     setBookingCode("");
     setCodeValue("");
     setIsCodeError(false);
@@ -68,6 +85,7 @@ export default function Page() {
         bookingCode={bookingCode}
         setBookingCode={setBookingCode}
         onOpenConfirm={onOpenConfirmation}
+        message={message}
       />
       <SelfValidateTicketConfirmationModal
         isOpen={isOpenConfirmation}

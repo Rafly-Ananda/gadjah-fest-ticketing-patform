@@ -31,14 +31,14 @@ export default function Page({ params }: { params: { id: string } }) {
         `${PROJECT_HOST}/api/booking/code/${params.id}`
       );
 
-      setUser({
-        email: data.booking.user.email,
-        firstName: data.booking.user.firstName,
-        lastName: data.booking.user.lastName,
-        mobileNumber: data.booking.user.mobileNumber,
-      });
       setMessage(data.message);
-      setBookingStatus(data.booking.bookingStatus);
+      setUser({
+        email: data?.booking?.user?.email,
+        firstName: data?.booking?.user?.firstName,
+        lastName: data?.booking?.user?.lastName,
+        mobileNumber: data?.booking?.user?.mobileNumber,
+      });
+      setBookingStatus(data?.booking?.bookingStatus);
       if (data.booking.length !== 0) {
         setTickets(data.booking.purchasedTickets);
       }

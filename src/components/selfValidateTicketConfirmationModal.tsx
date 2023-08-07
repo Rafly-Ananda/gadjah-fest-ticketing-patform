@@ -65,7 +65,7 @@ const SelfValidateTicketConfirmationModal: FC<ComponentProps> = ({
                   onPress={validateBookingAction}
                   isLoading={isLoading}
                 >
-                  Cek
+                  Validasi
                 </Button>
               </ModalFooter>
             </>

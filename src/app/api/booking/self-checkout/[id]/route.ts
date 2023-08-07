@@ -67,6 +67,15 @@ export async function POST(
       `${process.env.PROJECT_HOST}/api/booking/code/${params.id}`,
     )).json();
 
+    if (booking.message === "Booking not found") {
+      return NextResponse.json({
+        status: "Success",
+        message: "Booking not found",
+      }, {
+        status: 200,
+      });
+    }
+
     if (booking.booking.bookingStatus) {
       return NextResponse.json({
         status: "Self Checkout Success",

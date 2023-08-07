@@ -14,7 +14,6 @@ import { buyerDataType } from "@/interfaces";
 interface ComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
-  handleBooking: () => Promise<void>;
   buyerData: buyerDataType | undefined;
   setBuyerData: React.Dispatch<React.SetStateAction<buyerDataType>>;
   isBooking: boolean;

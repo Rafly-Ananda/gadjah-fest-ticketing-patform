@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import ConfirmationModal from "@/components/confirmationModal";
 import FestivalConfirmationModal from "@/components/festivalConfirmationModal";
 import KiteRegistrationModal from "@/components/kiteRegistrationModal";
+import KiteRegistrationConfirmationModal from "@/components/kiteRegistrationConfirmationModal";
 
 const Map = dynamic(() => import("../components/leafletMap"), {
   ssr: false,
@@ -93,6 +94,12 @@ export default function Home() {
     onClose: onCloseKiteRegistration,
   } = useDisclosure();
   const {
+    isOpen: isOpenKiteRegistrationConfirmation,
+    onOpen: onOpenKiteRegistrationConfirmation,
+    onOpenChange: onOpenChangeKiteRegistrationConfirmation,
+    onClose: onCloseKiteRegistrationConfirmation,
+  } = useDisclosure();
+  const {
     isOpen: bookingConfirmIsOpen,
     onOpen: bookingConfirmOnOpen,
     onOpenChange: bookingConfirmOnOpenChange,
@@ -114,6 +121,7 @@ export default function Home() {
   const [marathonTicker, setMarathonTicket] = useState<Ticket[]>([]);
   const [isBooking, setIsBooking] = useState<boolean>(false);
   const [selectedMarathon, setSelectedMarathon] = useState<string>("");
+  const [selectedKite, setSelectedKite] = useState<string>("");
   const [bookingObj, setbookingObj] = useState<BookingDetailsRespond>({
     bookingCode: "",
     invoiceUrl: "",
@@ -289,9 +297,52 @@ export default function Home() {
       setIsBooking(false);
       onClose();
       onCloseConfirmFestival();
+      setBuyerData({
+        email: "",
+        firstName: "",
+        lastName: "",
+        mobileNumber: "",
+      });
       return;
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const handleKiteBooking = async () => {
+    try {
+      setIsBooking(true);
+      const bookingPayload = {
+        user: {
+          ...buyerData,
+        },
+        details: [{ ticketId: selectedKite, quantity: 1 }],
+      };
+
+      const { data } = await axios.post(
+        `${PROJECT_HOST}/api/booking/kite`,
+        bookingPayload
+      );
+
+      setbookingObj({
+        bookingCode: data.booking.generatedBookingCode,
+        invoiceUrl: data.booking.invoiceUrl,
+      });
+
+      setIsBooking(false);
+      bookingConfirmOnOpen();
+      setTimeout(() => {
+        onCloseKiteRegistrationConfirmation();
+        onCloseKiteRegistration();
+      }, 500);
+      setBuyerData({
+        email: "",
+        firstName: "",
+        lastName: "",
+        mobileNumber: "",
+      });
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -304,7 +355,6 @@ export default function Home() {
         },
         details: [{ ticketId: selectedMarathon, quantity: 1 }],
       };
-      onCloseConfirm();
 
       const { data } = await axios.post(
         `${PROJECT_HOST}/api/booking/marathon`,
@@ -320,6 +370,23 @@ export default function Home() {
       setIsBooking(false);
       onCloseMarathon();
       onCloseConfirm();
+      setMarathonDetail({
+        user: {
+          email: "",
+          firstName: "",
+          lastName: "",
+          mobileNumber: "",
+          gender: "",
+          marathonSkill: "",
+        },
+        contactInformation: {
+          email: "",
+          firstName: "",
+          lastName: "",
+          mobileNumber: "",
+        },
+        additionalInformation: "",
+      });
       return;
     } catch (e) {
       console.log(e);
@@ -413,14 +480,23 @@ export default function Home() {
         onClose={onCloseMarathon}
         onOpenConfirm={onOpenConfirm}
       />
-      {/* isOpen,
-  onOpenChange,
-  buyerData,
-  setBuyerData,
-  isBooking,
-  onClose,
-  onOpenConfirm, */}
-      {/* <KiteRegistrationModal isOpen={isOpenKiteRegistration} onOpenChange={onOpenChangeKiteRegistration} onClose={onCloseKiteRegistration} /> */}
+      <KiteRegistrationModal
+        isOpen={isOpenKiteRegistration}
+        onOpenChange={onOpenChangeKiteRegistration}
+        buyerData={buyerData}
+        setBuyerData={setBuyerData}
+        isBooking={isBooking}
+        onClose={onCloseKiteRegistration}
+        onOpenConfirm={onOpenChangeKiteRegistrationConfirmation}
+      />
+      <KiteRegistrationConfirmationModal
+        isOpen={isOpenKiteRegistrationConfirmation}
+        onOpenChange={onOpenChangeKiteRegistrationConfirmation}
+        isBooking={isBooking}
+        onClose={onCloseKiteRegistrationConfirmation}
+        buyerData={buyerData}
+        handleKiteBooking={handleKiteBooking}
+      />
       <BookingConfirmationModal
         isOpen={bookingConfirmIsOpen}
         onOpenChange={bookingConfirmOnOpenChange}
@@ -605,16 +681,16 @@ export default function Home() {
       </div>
 
       {/* Registrasi Layang-layang */}
-      {/* <div className="flex items-center justify-center w-full pt-5">
+      <div className="flex items-center justify-center w-full pt-5">
         <div className="flex flex-col items-center gap-8 md:w-3/5 lg:w-3/5 w-full p-2 md:p-0">
           <h1 className="text-lg font-medium">Registrasi Layang-Layang</h1>
 
-          <div className=" flex flex-col items-center justify-center">
+          {/* <div className=" flex flex-col items-center justify-center">
             <h2 className="text-xs">TANGGAL LOMBA</h2>
             <h2 className="font-semibold flex items-center gap-1">
               Sabtu, <span className="text-3xl">12 - 13</span> Agustus 2023
             </h2>
-          </div>
+          </div> */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
             {kiteTicketBooking.length > 0
               ? kiteTicketBooking.map((e, i) => (
@@ -671,8 +747,8 @@ export default function Home() {
                       <div className="flex w-full items-center justify-center gap-2">
                         <Button
                           onPress={() => {
-                            // onOpenMarathon();
-                            // setSelectedMarathon(e.id);
+                            onOpenKiteRegistration();
+                            setSelectedKite(e.id);
                           }}
                           className="bg-[#ffffff] text-[#0a6c72] rounded-2xl  border border-[#0a6c72] flex items-center justify-center text-xs"
                         >
@@ -705,7 +781,7 @@ export default function Home() {
                 ))}
           </div>
         </div>
-      </div> */}
+      </div>
 
       {/* Registrasi Marathon */}
       <div className="flex items-center justify-center w-full pt-5">
@@ -809,7 +885,7 @@ export default function Home() {
             Lampung = Little Indonesia
           </h1>
 
-          <Map />
+          {/* <Map /> */}
 
           <a href="https://www.google.com/maps/place/Gadjah+Fest/@-5.182838,105.78751,15z/data=!4m2!3m1!1s0x0:0xcfd1f46ae0bb31ec?sa=X&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhDEAA&ved=2ahUKEwiKq8jz1sOAAxXpa2wGHSpTDbsQ_BJ6BAhNEAM">
             <p className="text-sm font-semibold underline">
