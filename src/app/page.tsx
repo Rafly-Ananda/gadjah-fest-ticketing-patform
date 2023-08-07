@@ -126,6 +126,7 @@ export default function Home() {
     bookingCode: "",
     invoiceUrl: "",
   });
+  const [isKiteFree, setIsKiteFree] = useState<boolean>(false);
   const items = [1, 2, 3];
 
   const [festivalTicketBooking, setFestivalTicketBooking] = useState({
@@ -325,8 +326,8 @@ export default function Home() {
       );
 
       setbookingObj({
-        bookingCode: data.booking.generatedBookingCode,
-        invoiceUrl: data.booking.invoiceUrl,
+        bookingCode: data.detail.bookingId,
+        invoiceUrl: "",
       });
 
       setIsBooking(false);
@@ -503,6 +504,7 @@ export default function Home() {
         isOpen={bookingConfirmIsOpen}
         onOpenChange={bookingConfirmOnOpenChange}
         bookingObj={bookingObj}
+        isKiteFree={isKiteFree}
       />
       <div className="absolute inset-0">
         <div className="md:h-[700px] h-[300px] w-full relative" id="hero">
@@ -749,6 +751,7 @@ export default function Home() {
                           onPress={() => {
                             onOpenKiteRegistration();
                             setSelectedKite(e.id);
+                            setIsKiteFree(e.price === 0 ? true : false);
                           }}
                           className="bg-[#ffffff] text-[#0a6c72] rounded-2xl  border border-[#0a6c72] flex items-center justify-center text-xs"
                         >

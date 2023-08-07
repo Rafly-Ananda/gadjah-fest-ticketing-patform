@@ -19,12 +19,14 @@ interface ComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
   bookingObj: BookingDetailsRespond;
+  isKiteFree: boolean;
 }
 
 const BookingConfirmationModal: FC<ComponentProps> = ({
   isOpen,
   onOpenChange,
   bookingObj,
+  isKiteFree,
 }) => {
   return (
     <>
@@ -36,23 +38,35 @@ const BookingConfirmationModal: FC<ComponentProps> = ({
         size="xs"
       >
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
                 Booking Success
               </ModalHeader>
               <ModalBody className="flex items-center">
-                <p className="text-justify">
-                  Kamu baru saja melakukan pemesanan tiket dengan booking ID
-                  <strong> {bookingObj.bookingCode}</strong> untuk acara Gadjah
-                  Fest 2023, segera lakukan pembayaran dengan menekan tombol
-                  link pembayaran dibawah ini. Atau cek email kamu!.
-                </p>
-                <a href={bookingObj.invoiceUrl} className="w-full">
-                  <Button className="bg-[#0a6c72] rounded text-white text-[12px] font-semibold no-underline text-center w-full">
-                    Link Pembayaran
-                  </Button>
-                </a>
+                {isKiteFree && bookingObj.invoiceUrl === "" ? (
+                  <>
+                    <p className="text-justify">
+                      Kamu baru saja melakukan pemesanan tiket dengan booking ID
+                      <strong> {bookingObj.bookingCode}</strong> silahkan cek
+                      email kamu untuk detail nya.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-justify">
+                      Kamu baru saja melakukan pemesanan tiket dengan booking ID
+                      <strong> {bookingObj.bookingCode}</strong> untuk acara
+                      Gadjah Fest 2023, segera lakukan pembayaran dengan menekan
+                      tombol link pembayaran dibawah ini. Atau cek email kamu!.
+                    </p>
+                    <a href={bookingObj.invoiceUrl} className="w-full">
+                      <Button className="bg-[#0a6c72] rounded text-white text-[12px] font-semibold no-underline text-center w-full">
+                        Link Pembayaran
+                      </Button>
+                    </a>
+                  </>
+                )}
               </ModalBody>
               <ModalFooter>
                 {/* <Button
