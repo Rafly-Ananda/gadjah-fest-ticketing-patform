@@ -67,6 +67,8 @@ export async function POST(
       `${process.env.PROJECT_HOST}/api/booking/code/${params.id}`,
     )).json();
 
+    console.log(booking);
+
     if (booking.message === "Booking not found") {
       return NextResponse.json({
         status: "Success",
@@ -76,7 +78,7 @@ export async function POST(
       });
     }
 
-    if (booking.booking.bookingStatus) {
+    if (booking.booking.bookingStatus === "PAID") {
       return NextResponse.json({
         status: "Self Checkout Success",
         message: "Booking already paid, skipping ticket generation",
