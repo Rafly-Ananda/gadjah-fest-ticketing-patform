@@ -325,10 +325,17 @@ export default function Home() {
         bookingPayload
       );
 
-      setbookingObj({
-        bookingCode: data.detail.bookingId,
-        invoiceUrl: "",
-      });
+      if (data?.detail === undefined) {
+        setbookingObj({
+          bookingCode: data.booking.bookingId,
+          invoiceUrl: data.booking.invoiceUrl,
+        });
+      } else {
+        setbookingObj({
+          bookingCode: data.detail.bookingId,
+          invoiceUrl: "",
+        });
+      }
 
       setIsBooking(false);
       bookingConfirmOnOpen();
