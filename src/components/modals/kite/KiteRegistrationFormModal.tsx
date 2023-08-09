@@ -9,27 +9,26 @@ import {
   Button,
   Input,
 } from "@nextui-org/react";
-import { buyerDataType } from "@/interfaces";
+import { IBuyerData } from "@/interfaces/_base";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
+  onClose: () => void;
+  onOpen: () => void;
   onOpenChange: () => void;
-  handleBooking: () => Promise<void>;
-  buyerData: buyerDataType | undefined;
-  setBuyerData: React.Dispatch<React.SetStateAction<buyerDataType>>;
+  buyerData: IBuyerData | undefined;
+  setBuyerData: React.Dispatch<React.SetStateAction<IBuyerData | undefined>>;
   isBooking: boolean;
-  onClose: any;
-  onOpenConfirm: any;
 }
 
-const CheckoutModal: FC<ComponentProps> = ({
+const KiteRegistrationFormModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
   buyerData,
   setBuyerData,
   isBooking,
   onClose,
-  onOpenConfirm,
+  onOpen,
 }) => {
   return (
     <>
@@ -45,7 +44,7 @@ const CheckoutModal: FC<ComponentProps> = ({
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Booking Ticket
+                Kite Registration
               </ModalHeader>
               <ModalBody>
                 <Input
@@ -53,10 +52,13 @@ const CheckoutModal: FC<ComponentProps> = ({
                   label="Email"
                   placeholder="Masukkan email"
                   variant="bordered"
-                  value={buyerData?.email}
+                  value={buyerData?.email ?? ""}
                   isRequired
                   onChange={(e) =>
-                    setBuyerData((prev) => ({ ...prev, email: e.target.value }))
+                    setBuyerData((prev) => ({
+                      ...prev!,
+                      email: e.target.value,
+                    }))
                   }
                 />
                 <Input
@@ -64,11 +66,11 @@ const CheckoutModal: FC<ComponentProps> = ({
                   label="Nama Pertama"
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
-                  value={buyerData?.firstName}
+                  value={buyerData?.firstName ?? ""}
                   isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
-                      ...prev,
+                      ...prev!,
                       firstName: e.target.value,
                     }))
                   }
@@ -78,11 +80,11 @@ const CheckoutModal: FC<ComponentProps> = ({
                   label="Nama Terakhir"
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
-                  value={buyerData?.lastName}
+                  value={buyerData?.lastName ?? ""}
                   isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
-                      ...prev,
+                      ...prev!,
                       lastName: e.target.value,
                     }))
                   }
@@ -92,11 +94,11 @@ const CheckoutModal: FC<ComponentProps> = ({
                   label="Nomor Handphone"
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
-                  value={buyerData?.mobileNumber}
+                  value={buyerData?.mobileNumber ?? ""}
                   isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
-                      ...prev,
+                      ...prev!,
                       mobileNumber: e.target.value,
                     }))
                   }
@@ -109,13 +111,17 @@ const CheckoutModal: FC<ComponentProps> = ({
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={onOpenConfirm}
+                  onPress={onOpen}
                   isLoading={isBooking ? true : false}
                   isDisabled={
                     buyerData?.firstName === "" ||
+                    buyerData?.firstName === undefined ||
                     buyerData?.lastName === "" ||
+                    buyerData?.lastName === undefined ||
                     buyerData?.email === "" ||
-                    buyerData?.mobileNumber === ""
+                    buyerData?.email === undefined ||
+                    buyerData?.mobileNumber === "" ||
+                    buyerData?.mobileNumber === undefined
                   }
                 >
                   Pesan
@@ -129,4 +135,4 @@ const CheckoutModal: FC<ComponentProps> = ({
   );
 };
 
-export default CheckoutModal;
+export default KiteRegistrationFormModal;

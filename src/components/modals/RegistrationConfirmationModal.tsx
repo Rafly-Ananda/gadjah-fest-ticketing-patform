@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import {
   Modal,
   ModalContent,
@@ -7,24 +7,23 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Input,
 } from "@nextui-org/react";
-import { buyerDataType } from "@/interfaces";
+import { IBuyerData } from "@/interfaces/_base";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
-  onOpenChange: () => void;
   onClose: any;
-  handleFestivalBooking: any;
-  buyerData: buyerDataType;
+  onOpenChange: () => void;
+  buyerData?: IBuyerData | undefined;
   isBooking: boolean;
+  handleBooking: () => Promise<void>;
 }
 
-const FestivalConfirmationModal: FC<ComponentProps> = ({
+const RegistrationConfirmationModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
   onClose,
-  handleFestivalBooking,
+  handleBooking,
   buyerData,
   isBooking,
 }) => {
@@ -53,13 +52,13 @@ const FestivalConfirmationModal: FC<ComponentProps> = ({
                 </Button>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={handleFestivalBooking}
+                  onPress={handleBooking}
                   isLoading={isBooking}
                   isDisabled={
-                    buyerData.firstName === "" ||
-                    buyerData.lastName === "" ||
-                    buyerData.email === "" ||
-                    buyerData.mobileNumber === ""
+                    buyerData?.firstName === "" ||
+                    buyerData?.lastName === "" ||
+                    buyerData?.email === "" ||
+                    buyerData?.mobileNumber === ""
                   }
                 >
                   Ya
@@ -73,4 +72,4 @@ const FestivalConfirmationModal: FC<ComponentProps> = ({
   );
 };
 
-export default FestivalConfirmationModal;
+export default RegistrationConfirmationModal;

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, PurchasedTicket } from "@prisma/client";
-import { TicketAvailibilityType, TicketDetailsType } from "@/interfaces";
+import { PurchasedTicket } from "@prisma/client";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import BookingTemplate from "@/emails-utils/BookingTemplate";
@@ -8,9 +7,8 @@ import { TicketStatus } from "@prisma/client";
 import QRCode from "qrcode";
 import { uploadQRCodetoS3 } from "@/utils/s3Init";
 import PaidBookingTemplate from "@/emails-utils/paidBookingTemplate";
-
+import { prismaClientInstance } from "@/_base";
 import axios from "axios";
-const prisma = new PrismaClient();
 
 interface EmailPayloadInterface {
   to: string;
@@ -53,11 +51,6 @@ const sendEmail = async (data: EmailPayloadInterface) => {
         bookingLink: data.bookingLink,
       }),
     ),
-    // attachments: [{
-    //   filename: "Document",
-    //   path: data.attachmentLink,
-    //   contentType: "application/pdf",
-    // }],
   });
 };
 
@@ -119,7 +112,7 @@ export async function POST(
   }
 
   try {
-    const masterTicketsData = await prisma.ticket.findMany({
+    const masterTicketsData = await prismaClientInstance.ticket.findMany({
       where: {
         OR: booking.details.map((e: any) => {
           return { id: { equals: e.ticketId } };
@@ -141,7 +134,7 @@ export async function POST(
     });
 
     // ** 3 Create Booking & Details
-    const newBooking = await prisma.booking.create({
+    const newBooking = await prismaClientInstance.booking.create({
       data: {
         bookingStatus: "PENDING",
         generatedBookingCode: generateBookingCode(10),
@@ -173,7 +166,7 @@ export async function POST(
 
     if (price === 0) {
       // ** 1 Update booking status
-      const updateBooking = await prisma.booking.update({
+      const updateBooking = await prismaClientInstance.booking.update({
         where: {
           id: newBooking.id,
         },
@@ -212,15 +205,16 @@ export async function POST(
         }
       }
 
-      await prisma.purchasedTicket.createMany({
+      await prismaClientInstance.purchasedTicket.createMany({
         data: [...purchasedTicketObj],
       });
 
-      const generatedTickets = await prisma.purchasedTicket.findMany({
-        where: {
-          bookingId: updateBooking.id,
-        },
-      });
+      const generatedTickets = await prismaClientInstance.purchasedTicket
+        .findMany({
+          where: {
+            bookingId: updateBooking.id,
+          },
+        });
 
       // ** 3 Save to S3
       for (const ticket of generatedTickets) {
@@ -233,7 +227,7 @@ export async function POST(
         );
         const type = qrCode!.split(";")[0].split("/")[1];
         await uploadQRCodetoS3(ticket.id, base64Img, type);
-        await prisma.purchasedTicket.update({
+        await prismaClientInstance.purchasedTicket.update({
           where: {
             id: ticket.id,
           },
@@ -261,14 +255,15 @@ export async function POST(
       });
 
       // ** 5 Send Finish Payment Email
-      const purchasedTickets = await prisma.purchasedTicket.findMany({
-        where: {
-          bookingId: updateBooking.id,
-        },
-        include: {
-          ticket: true,
-        },
-      });
+      const purchasedTickets = await prismaClientInstance.purchasedTicket
+        .findMany({
+          where: {
+            bookingId: updateBooking.id,
+          },
+          include: {
+            ticket: true,
+          },
+        });
 
       NextResponse.json({
         status: "finding records on db ...",
@@ -350,7 +345,7 @@ export async function POST(
       } = data;
 
       // ** 5 Create Payment
-      await prisma.payment.create({
+      await prismaClientInstance.payment.create({
         data: {
           amount: xenditInvoiceAmount,
           bookingId: newBooking.id,

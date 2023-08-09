@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { uploadQRCodetoS3 } from "@/utils/s3Init";
 import { PurchasedTicket, TicketStatus } from "@prisma/client";
 import QRCode from "qrcode";
@@ -7,8 +6,7 @@ import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import PaidBookingTemplate from "@/emails-utils/paidBookingTemplate";
 import axios from "axios";
-
-const prisma = new PrismaClient();
+import { prismaClientInstance } from "@/_base";
 
 interface EmailPayloatInterface {
   to: string;
@@ -91,7 +89,7 @@ export async function POST(
       });
     } else {
       // ** 1 Update booking status
-      const updateBooking = await prisma.booking.update({
+      const updateBooking = await prismaClientInstance.booking.update({
         where: {
           id: booking.booking.id,
         },
@@ -141,15 +139,16 @@ export async function POST(
         }
       }
 
-      await prisma.purchasedTicket.createMany({
+      await prismaClientInstance.purchasedTicket.createMany({
         data: [...purchasedTicketObj],
       });
 
-      const generatedTickets = await prisma.purchasedTicket.findMany({
-        where: {
-          bookingId: updateBooking.id,
-        },
-      });
+      const generatedTickets = await prismaClientInstance.purchasedTicket
+        .findMany({
+          where: {
+            bookingId: updateBooking.id,
+          },
+        });
 
       // ** 3 Save to S3
       for (const ticket of generatedTickets) {
@@ -162,7 +161,7 @@ export async function POST(
         );
         const type = qrCode!.split(";")[0].split("/")[1];
         await uploadQRCodetoS3(ticket.id, base64Img, type);
-        await prisma.purchasedTicket.update({
+        await prismaClientInstance.purchasedTicket.update({
           where: {
             id: ticket.id,
           },
@@ -190,14 +189,15 @@ export async function POST(
       });
 
       // ** 5 Send Finish Payment Email
-      const purchasedTickets = await prisma.purchasedTicket.findMany({
-        where: {
-          bookingId: updateBooking.id,
-        },
-        include: {
-          ticket: true,
-        },
-      });
+      const purchasedTickets = await prismaClientInstance.purchasedTicket
+        .findMany({
+          where: {
+            bookingId: updateBooking.id,
+          },
+          include: {
+            ticket: true,
+          },
+        });
 
       NextResponse.json({
         status: "finding records on db ...",

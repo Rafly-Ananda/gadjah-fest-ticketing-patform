@@ -7,26 +7,19 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Input,
 } from "@nextui-org/react";
+import { IBookingDetailsResponse } from "@/interfaces/_base";
 
-interface BookingDetailsRespond {
-  invoiceUrl: string;
-  bookingCode: string;
-}
-
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
-  bookingObj: BookingDetailsRespond;
-  isKiteFree: boolean;
+  bookingResponse: IBookingDetailsResponse | undefined;
 }
 
-const BookingConfirmationModal: FC<ComponentProps> = ({
+const RegistrationSuccessModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
-  bookingObj,
-  isKiteFree,
+  bookingResponse,
 }) => {
   return (
     <>
@@ -44,23 +37,24 @@ const BookingConfirmationModal: FC<ComponentProps> = ({
                 Booking Success
               </ModalHeader>
               <ModalBody className="flex items-center">
-                {isKiteFree && bookingObj.invoiceUrl === "" ? (
+                {bookingResponse?.invoiceUrl === "" ? (
                   <>
                     <p className="text-justify">
                       Kamu baru saja melakukan pemesanan tiket dengan booking ID
-                      <strong> {bookingObj.bookingCode}</strong> silahkan cek
-                      email kamu untuk detail nya.
+                      <strong> {bookingResponse?.bookingCode}</strong> silahkan
+                      cek email kamu untuk detail nya.
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="text-justify">
                       Kamu baru saja melakukan pemesanan tiket dengan booking ID
-                      <strong> {bookingObj.bookingCode}</strong> untuk acara
-                      Gadjah Fest 2023, segera lakukan pembayaran dengan menekan
-                      tombol link pembayaran dibawah ini. Atau cek email kamu!.
+                      <strong> {bookingResponse?.bookingCode}</strong> untuk
+                      acara Gadjah Fest 2023, segera lakukan pembayaran dengan
+                      menekan tombol link pembayaran dibawah ini. Atau cek email
+                      kamu!.
                     </p>
-                    <a href={bookingObj.invoiceUrl} className="w-full">
+                    <a href={bookingResponse?.invoiceUrl} className="w-full">
                       <Button className="bg-[#0a6c72] rounded text-white text-[12px] font-semibold no-underline text-center w-full">
                         Link Pembayaran
                       </Button>
@@ -68,18 +62,7 @@ const BookingConfirmationModal: FC<ComponentProps> = ({
                   </>
                 )}
               </ModalBody>
-              <ModalFooter>
-                {/* <Button
-                  color="primary"
-                  onPress={async () => {
-                    await handleBooking();
-                    onClose();
-                  }}
-                  isLoading={isBooking ? true : false}
-                >
-                  Pesan
-                </Button> */}
-              </ModalFooter>
+              <ModalFooter></ModalFooter>
             </>
           )}
         </ModalContent>
@@ -88,4 +71,4 @@ const BookingConfirmationModal: FC<ComponentProps> = ({
   );
 };
 
-export default BookingConfirmationModal;
+export default RegistrationSuccessModal;

@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prismaClientInstance } from "@/_base";
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
-    const booking = await prisma.booking.findUnique({
+    const booking = await prismaClientInstance.booking.findUnique({
       where: {
         id: params.id,
       },
@@ -48,7 +47,7 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
-    const booking = await prisma.booking.update({
+    const booking = await prismaClientInstance.booking.update({
       where: {
         id: params.id,
       },

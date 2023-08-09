@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { TicketAvailibilityType, TicketDetailsType } from "@/interfaces";
+import { ITicketAvailibilityType } from "@/interfaces/_base";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import BookingTemplate from "@/emails-utils/BookingTemplate";
-
 import axios from "axios";
-const prisma = new PrismaClient();
+import { prismaClientInstance } from "@/_base";
 
 interface EmailPayloadInterface {
   to: string;
@@ -39,11 +37,6 @@ const sendEmail = async (data: EmailPayloadInterface) => {
         bookingLink: data.bookingLink,
       }),
     ),
-    // attachments: [{
-    //   filename: "Document",
-    //   path: data.attachmentLink,
-    //   contentType: "application/pdf",
-    // }],
   });
 };
 
@@ -51,7 +44,7 @@ export async function POST(
   request: Request,
 ) {
   let booking: any = await request.json();
-  const availabilityReturnObj: TicketAvailibilityType[] = [];
+  const availabilityReturnObj: ITicketAvailibilityType[] = [];
   let validToBook: boolean = true;
   const xenditAuthToken = Buffer.from(`${process.env.XENDIT_API_KEY}:`)
     .toString(
@@ -99,7 +92,7 @@ export async function POST(
     //   }
     // });
 
-    const masterTicketsData = await prisma.ticket.findMany({
+    const masterTicketsData = await prismaClientInstance.ticket.findMany({
       where: {
         OR: booking.details.map((e: any) => {
           return { id: { equals: e.ticketId } };
@@ -154,7 +147,7 @@ export async function POST(
     });
 
     // ** 3 Create Booking & Details
-    const newBooking = await prisma.booking.create({
+    const newBooking = await prismaClientInstance.booking.create({
       data: {
         bookingStatus: "PENDING",
         generatedBookingCode: generateBookingCode(10),
@@ -246,7 +239,7 @@ export async function POST(
     } = data;
 
     // ** 5 Create Payment
-    await prisma.payment.create({
+    await prismaClientInstance.payment.create({
       data: {
         amount: xenditInvoiceAmount,
         bookingId: newBooking.id,

@@ -10,7 +10,7 @@ import {
   Input,
 } from "@nextui-org/react";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: any;
@@ -21,7 +21,7 @@ interface ComponentProps {
   isLoading: boolean;
 }
 
-const SelfValidateTicketConfirmationModal: FC<ComponentProps> = ({
+const SelfValidateTicketConfirmationModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
   onClose,

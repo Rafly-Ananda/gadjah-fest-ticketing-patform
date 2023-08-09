@@ -2,25 +2,24 @@
 import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { menus } from "@/statics/statics";
-import CheckTicketModal from "./checkTicketModal";
+import CheckTicketModal from "./modals/CheckTicketModal";
 import { useRouter, usePathname } from "next/navigation";
 import { useDisclosure } from "@nextui-org/react";
 import Hamburger from "hamburger-react";
 
 const Navbar: FC<any> = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [bookingCode, setBookingCode] = useState<string>("");
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
   const [isIntersecting, setIstersecting] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  const navigateToTicketDetails = async (cb: any) => {
+  const navigateToTicketDetails = async () => {
+    setIsLoading(true);
     router.push(`/invoice/${bookingCode}`);
     setIsNavOpen(false);
-    setTimeout(() => {
-      cb();
-    }, 500);
   };
 
   useEffect(() => {
@@ -32,7 +31,15 @@ const Navbar: FC<any> = () => {
       observer.observe(document.getElementById("hero")!);
     }
     setIsNavOpen(false);
-  }, [pathname]);
+
+    return () => {
+      if (document.getElementById("hero")) {
+        observer.observe(document.getElementById("hero")!);
+      }
+      onClose();
+      setIsLoading(false);
+    };
+  }, [pathname, onClose]);
 
   return (
     <nav
@@ -49,6 +56,8 @@ const Navbar: FC<any> = () => {
       <CheckTicketModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
+        onClose={onClose}
+        isLoading={isLoading}
         bookingCode={bookingCode}
         setBookingCode={setBookingCode}
         navigateToTicketDetails={navigateToTicketDetails}

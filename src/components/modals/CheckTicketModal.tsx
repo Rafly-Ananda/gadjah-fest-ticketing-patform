@@ -12,38 +12,38 @@ import {
 
 interface ComponentProps {
   isOpen: boolean;
+  onClose: () => void;
+  isLoading: boolean;
   onOpenChange: () => void;
-  onClose: any;
+  navigateToTicketDetails: (cb: any) => void;
   bookingCode: string;
   setBookingCode: React.Dispatch<React.SetStateAction<string>>;
-  onOpenConfirm: any;
-  message: string;
 }
 
-const SelfValidateTicketModal: FC<ComponentProps> = ({
+const CheckTicketModal: FC<ComponentProps> = ({
   isOpen,
-  onOpenChange,
   onClose,
+  isLoading,
+  onOpenChange,
+  navigateToTicketDetails,
   bookingCode,
   setBookingCode,
-  onOpenConfirm,
-  message,
 }) => {
   return (
     <>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        isDismissable={false}
+        isDismissable={isLoading ? false : true}
+        onClose={onClose}
         placement="center"
         size="xs"
-        onClose={onClose}
       >
         <ModalContent>
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Validate Booking
+                Check Ticket
               </ModalHeader>
               <ModalBody>
                 <Input
@@ -54,14 +54,12 @@ const SelfValidateTicketModal: FC<ComponentProps> = ({
                   value={bookingCode}
                   onChange={(e) => setBookingCode((prev) => e.target.value)}
                 />
-                <h1 className="font-semibold text-sm text-red-600">
-                  {message}
-                </h1>
               </ModalBody>
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={onOpenConfirm}
+                  onPress={navigateToTicketDetails}
+                  isLoading={isLoading ? true : false}
                 >
                   Cek
                 </Button>
@@ -74,4 +72,4 @@ const SelfValidateTicketModal: FC<ComponentProps> = ({
   );
 };
 
-export default SelfValidateTicketModal;
+export default CheckTicketModal;

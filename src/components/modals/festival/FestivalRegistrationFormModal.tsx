@@ -9,26 +9,26 @@ import {
   Button,
   Input,
 } from "@nextui-org/react";
-import { buyerDataType } from "@/interfaces";
+import { IBuyerData } from "@/interfaces/_base";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
+  onClose: () => void;
+  onOpen: () => void;
   onOpenChange: () => void;
-  buyerData: buyerDataType | undefined;
-  setBuyerData: React.Dispatch<React.SetStateAction<buyerDataType>>;
+  buyerData: IBuyerData | undefined;
+  setBuyerData: React.Dispatch<React.SetStateAction<IBuyerData | undefined>>;
   isBooking: boolean;
-  onClose: any;
-  onOpenConfirm: any;
 }
 
-const KiteRegistrationModal: FC<ComponentProps> = ({
+const FestivalRegistrationFormModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
   buyerData,
   setBuyerData,
   isBooking,
   onClose,
-  onOpenConfirm,
+  onOpen,
 }) => {
   return (
     <>
@@ -44,7 +44,7 @@ const KiteRegistrationModal: FC<ComponentProps> = ({
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Kita Registration
+                Festival Ticket Booking
               </ModalHeader>
               <ModalBody>
                 <Input
@@ -52,10 +52,13 @@ const KiteRegistrationModal: FC<ComponentProps> = ({
                   label="Email"
                   placeholder="Masukkan email"
                   variant="bordered"
-                  value={buyerData?.email}
+                  value={buyerData?.email ?? ""}
                   isRequired
                   onChange={(e) =>
-                    setBuyerData((prev) => ({ ...prev, email: e.target.value }))
+                    setBuyerData((prev) => ({
+                      ...prev!,
+                      email: e.target.value,
+                    }))
                   }
                 />
                 <Input
@@ -63,11 +66,11 @@ const KiteRegistrationModal: FC<ComponentProps> = ({
                   label="Nama Pertama"
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
-                  value={buyerData?.firstName}
+                  value={buyerData?.firstName ?? ""}
                   isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
-                      ...prev,
+                      ...prev!,
                       firstName: e.target.value,
                     }))
                   }
@@ -77,11 +80,11 @@ const KiteRegistrationModal: FC<ComponentProps> = ({
                   label="Nama Terakhir"
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
-                  value={buyerData?.lastName}
+                  value={buyerData?.lastName ?? ""}
                   isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
-                      ...prev,
+                      ...prev!,
                       lastName: e.target.value,
                     }))
                   }
@@ -91,21 +94,35 @@ const KiteRegistrationModal: FC<ComponentProps> = ({
                   label="Nomor Handphone"
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
-                  value={buyerData?.mobileNumber}
+                  value={buyerData?.mobileNumber ?? ""}
                   isRequired
                   onChange={(e) =>
                     setBuyerData((prev) => ({
-                      ...prev,
+                      ...prev!,
                       mobileNumber: e.target.value,
                     }))
                   }
                 />
+                <h1 className="text-sm">
+                  <strong>Note:</strong> Pastikan email benar, tiket akan
+                  dikirimkan melalui email tersebut.
+                </h1>
               </ModalBody>
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={onOpenConfirm}
+                  onPress={onOpen}
                   isLoading={isBooking ? true : false}
+                  isDisabled={
+                    buyerData?.firstName === "" ||
+                    buyerData?.firstName === undefined ||
+                    buyerData?.lastName === "" ||
+                    buyerData?.lastName === undefined ||
+                    buyerData?.email === "" ||
+                    buyerData?.email === undefined ||
+                    buyerData?.mobileNumber === "" ||
+                    buyerData?.mobileNumber === undefined
+                  }
                 >
                   Pesan
                 </Button>
@@ -118,4 +135,4 @@ const KiteRegistrationModal: FC<ComponentProps> = ({
   );
 };
 
-export default KiteRegistrationModal;
+export default FestivalRegistrationFormModal;

@@ -15,7 +15,7 @@ interface ComponentProps {
   onOpenChange: () => void;
 }
 
-const SelfValidateTicketFinish: FC<ComponentProps> = ({
+const SelfValidateTicketSuccessModal: FC<ComponentProps> = ({
   isOpen,
   onOpenChange,
 }) => {
@@ -40,18 +40,7 @@ const SelfValidateTicketFinish: FC<ComponentProps> = ({
                   pelanggan untuk detail tiket nya.
                 </p>
               </ModalBody>
-              <ModalFooter>
-                {/* <Button
-                  color="primary"
-                  onPress={async () => {
-                    await handleBooking();
-                    onClose();
-                  }}
-                  isLoading={isBooking ? true : false}
-                >
-                  Pesan
-                </Button> */}
-              </ModalFooter>
+              <ModalFooter></ModalFooter>
             </>
           )}
         </ModalContent>
@@ -60,4 +49,4 @@ const SelfValidateTicketFinish: FC<ComponentProps> = ({
   );
 };
 
-export default SelfValidateTicketFinish;
+export default SelfValidateTicketSuccessModal;
