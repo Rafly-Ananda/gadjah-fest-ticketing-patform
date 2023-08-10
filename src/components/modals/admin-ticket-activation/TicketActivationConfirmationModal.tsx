@@ -37,9 +37,7 @@ const TicketActivationConfirmationModal: FC<IComponentProps> = ({
   activationSuccess,
 }) => {
   const router = useRouter();
-  useEffect(() => {
-    setIsCodeError(false);
-  }, []);
+
   return (
     <>
       <Modal
