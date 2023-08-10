@@ -72,6 +72,7 @@ export async function POST(
           },
           data: {
             bookingStatus: "PAID",
+            updatedAt: new Date(),
             payment: {
               update: {
                 where: {
@@ -79,6 +80,7 @@ export async function POST(
                 },
                 data: {
                   status: "PAID",
+                  updatedAt: new Date(),
                 },
               },
             },
@@ -89,6 +91,7 @@ export async function POST(
                 },
                 data: {
                   itemStatus: "PAID",
+                  updatedAt: new Date(),
                 },
               },
             },
@@ -162,6 +165,16 @@ export async function POST(
         await axios.get(
           `https://vercel-pdf-generator.vercel.app/api?bookingId=${updateBooking.id}&url=https://www.gadjahfest.com/invoice/${updateBooking.generatedBookingCode}`,
         );
+
+        await prismaClientInstance.booking.update({
+          where: {
+            id: body.external_id,
+          },
+          data: {
+            invoicePdfUrl:
+              `https://gadjah-ticketing-platform.s3.ap-southeast-1.amazonaws.com/${updateBooking.id}.pdf`,
+          },
+        });
 
         NextResponse.json({
           status: "Finish generating pdf and saving to S3...",
@@ -249,6 +262,7 @@ export async function POST(
           },
           data: {
             bookingStatus: "EXPIRED",
+            updatedAt: new Date(),
             payment: {
               update: {
                 where: {
@@ -256,6 +270,7 @@ export async function POST(
                 },
                 data: {
                   status: "EXPIRED",
+                  updatedAt: new Date(),
                 },
               },
             },
@@ -266,6 +281,7 @@ export async function POST(
                 },
                 data: {
                   itemStatus: "REVOKED",
+                  updatedAt: new Date(),
                 },
               },
             },

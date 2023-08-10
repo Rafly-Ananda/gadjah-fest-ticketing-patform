@@ -23,8 +23,6 @@ const LampungLittleIndonesia = () => {
         </a>
       </div>
 
-      <h1>asdasd</h1>
-
       <div className="flex flex-col items-center justify-center gap-4 w-full md:w-2/4 text-[#0a6c72] md:pr-24 md:pt-24">
         <Image
           src="/icon-rumah.png"
