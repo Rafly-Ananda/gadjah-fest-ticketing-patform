@@ -1,6 +1,6 @@
-import { navbarInteface } from "@/interfaces";
+import { INavbarInteface } from "@/interfaces/_base";
 
-export const menus: Array<navbarInteface> = [
+export const menus: Array<INavbarInteface> = [
   { name: "Beranda", href: "/" },
   { name: "Tiket", href: "/" },
   { name: "Registrasi Marathon", href: "/" },
