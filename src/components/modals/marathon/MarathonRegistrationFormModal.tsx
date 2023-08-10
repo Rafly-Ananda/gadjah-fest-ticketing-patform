@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,33 +8,32 @@ import {
   ModalFooter,
   Button,
   Input,
-  useDisclosure,
 } from "@nextui-org/react";
-import { MarathonDetailType } from "@/interfaces";
+import { IMarathonDetailData } from "@/interfaces/marathon";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/react";
 import Image from "next/image";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
+  onClose: () => void;
+  onOpen: () => void;
   onOpenChange: () => void;
-  handleBooking: () => Promise<void>;
-  marathonDetail: MarathonDetailType | undefined;
-  setMarathonDetail: React.Dispatch<React.SetStateAction<MarathonDetailType>>;
+  marathonDetail: IMarathonDetailData | undefined;
+  setMarathonDetail: React.Dispatch<
+    React.SetStateAction<IMarathonDetailData | undefined>
+  >;
   isBooking: boolean;
-  onClose: any;
-  onOpenConfirm: any;
 }
 
-const MarathonRegistrationModal: FC<ComponentProps> = ({
+const MarathonRegistrationFormModal: FC<IComponentProps> = ({
   isOpen,
+  onClose,
+  onOpen,
   onOpenChange,
-  handleBooking,
   marathonDetail,
   setMarathonDetail,
   isBooking,
-  onClose,
-  onOpenConfirm,
 }) => {
   return (
     <>
@@ -68,12 +67,12 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Email"
                   placeholder="Masukkan email"
                   variant="bordered"
-                  value={marathonDetail?.user.email}
+                  value={marathonDetail?.user.email ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
-                      user: { ...prev.user, email: e.target.value },
+                      ...prev!,
+                      user: { ...prev!.user, email: e.target.value },
                     }))
                   }
                 />
@@ -82,12 +81,12 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Nama Pertama"
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
-                  value={marathonDetail?.user.firstName}
+                  value={marathonDetail?.user.firstName ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
-                      user: { ...prev.user, firstName: e.target.value },
+                      ...prev!,
+                      user: { ...prev!.user, firstName: e.target.value },
                     }))
                   }
                 />
@@ -96,12 +95,12 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Nama Terakhir"
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
-                  value={marathonDetail?.user.lastName}
+                  value={marathonDetail?.user.lastName ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
-                      user: { ...prev.user, lastName: e.target.value },
+                      ...prev!,
+                      user: { ...prev!.user, lastName: e.target.value },
                     }))
                   }
                 />
@@ -110,23 +109,23 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Nomor Handphone"
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
-                  value={marathonDetail?.user.mobileNumber}
+                  value={marathonDetail?.user.mobileNumber ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
-                      user: { ...prev.user, mobileNumber: e.target.value },
+                      ...prev!,
+                      user: { ...prev!.user, mobileNumber: e.target.value },
                     }))
                   }
                 />
                 <RadioGroup
                   label="Jenis Kelamin"
                   size="sm"
-                  value={marathonDetail?.user.gender}
+                  value={marathonDetail?.user.gender ?? ""}
                   onValueChange={(e) => {
                     setMarathonDetail((prev) => ({
-                      ...prev,
-                      user: { ...prev.user, gender: e },
+                      ...prev!,
+                      user: { ...prev!.user, gender: e },
                     }));
                   }}
                 >
@@ -136,11 +135,11 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                 <RadioGroup
                   label="Jelaskan skill dalam marathon atau berlari anda"
                   size="sm"
-                  value={marathonDetail?.user.marathonSkill}
+                  value={marathonDetail?.user.marathonSkill ?? ""}
                   onValueChange={(e) => {
                     setMarathonDetail((prev) => ({
-                      ...prev,
-                      user: { ...prev.user, marathonSkill: e },
+                      ...prev!,
+                      user: { ...prev!.user, marathonSkill: e },
                     }));
                   }}
                 >
@@ -156,13 +155,13 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Email Kontak"
                   placeholder="Masukkan email"
                   variant="bordered"
-                  value={marathonDetail?.contactInformation.email}
+                  value={marathonDetail?.contactInformation.email ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
+                      ...prev!,
                       contactInformation: {
-                        ...prev.contactInformation,
+                        ...prev!.contactInformation,
                         email: e.target.value,
                       },
                     }))
@@ -173,13 +172,13 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Nama Pertama Kontak"
                   placeholder="Masukkan nama pertama"
                   variant="bordered"
-                  value={marathonDetail?.contactInformation.firstName}
+                  value={marathonDetail?.contactInformation.firstName ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
+                      ...prev!,
                       contactInformation: {
-                        ...prev.contactInformation,
+                        ...prev!.contactInformation,
                         firstName: e.target.value,
                       },
                     }))
@@ -190,13 +189,13 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Nama Terakhir Kontak"
                   placeholder="Masukkan nama terakhir"
                   variant="bordered"
-                  value={marathonDetail?.contactInformation.lastName}
+                  value={marathonDetail?.contactInformation.lastName ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
+                      ...prev!,
                       contactInformation: {
-                        ...prev.contactInformation,
+                        ...prev!.contactInformation,
                         lastName: e.target.value,
                       },
                     }))
@@ -207,13 +206,13 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Nomor Handphone Kontak"
                   placeholder="Masukkan nomor handphone"
                   variant="bordered"
-                  value={marathonDetail?.contactInformation.mobileNumber}
+                  value={marathonDetail?.contactInformation.mobileNumber ?? ""}
                   isRequired={true}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
+                      ...prev!,
                       contactInformation: {
-                        ...prev.contactInformation,
+                        ...prev!.contactInformation,
                         mobileNumber: e.target.value,
                       },
                     }))
@@ -223,10 +222,10 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
                   label="Informasi tambahan"
                   labelPlacement="outside"
                   placeholder="Masukkan informasi tambahan"
-                  value={marathonDetail?.additionalInformation}
+                  value={marathonDetail?.additionalInformation ?? ""}
                   onChange={(e) =>
                     setMarathonDetail((prev) => ({
-                      ...prev,
+                      ...prev!,
                       additionalInformation: e.target.value,
                     }))
                   }
@@ -239,17 +238,27 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={onOpenConfirm}
+                  onPress={onOpen}
                   isLoading={isBooking ? true : false}
                   isDisabled={
                     marathonDetail?.user.firstName === "" ||
+                    marathonDetail?.user.firstName === undefined ||
                     marathonDetail?.user.lastName === "" ||
+                    marathonDetail?.user.lastName === undefined ||
                     marathonDetail?.user.email === "" ||
+                    marathonDetail?.user.email === undefined ||
                     marathonDetail?.user.mobileNumber === "" ||
+                    marathonDetail?.user.mobileNumber === undefined ||
                     marathonDetail?.contactInformation.email === "" ||
+                    marathonDetail?.contactInformation.email === undefined ||
                     marathonDetail?.contactInformation.firstName === "" ||
+                    marathonDetail?.contactInformation.firstName ===
+                      undefined ||
                     marathonDetail?.contactInformation.lastName === "" ||
-                    marathonDetail?.contactInformation.mobileNumber === ""
+                    marathonDetail?.contactInformation.lastName === undefined ||
+                    marathonDetail?.contactInformation.mobileNumber === "" ||
+                    marathonDetail?.contactInformation.mobileNumber ===
+                      undefined
                   }
                 >
                   Pesan
@@ -263,4 +272,4 @@ const MarathonRegistrationModal: FC<ComponentProps> = ({
   );
 };
 
-export default MarathonRegistrationModal;
+export default MarathonRegistrationFormModal;

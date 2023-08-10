@@ -1,11 +1,15 @@
 "use client";
+
+// ** Libs
 import { useState, useEffect } from "react";
 import { PROJECT_HOST } from "@/config";
 import axios from "axios";
-import ValidateTicketModal from "@/components/validateTicketModal";
-import TicketActivationConfirmationModal from "@/components/ticketActivationConfirmationModal";
 import { useDisclosure } from "@nextui-org/react";
 import { Booking, PurchasedTicket } from "@prisma/client";
+
+// ** Components
+import TicketActivationFormModal from "@/components/modals/admin-ticket-activation/TicketActivationFormModal";
+import TicketActivationConfirmationModal from "@/components/modals/admin-ticket-activation/TicketActivationConfirmationModal";
 
 interface validateAPIResponseType {
   status: string;
@@ -33,20 +37,6 @@ const Page = ({ params }: { params: { id: string } }) => {
   const [adminError, setAdminError] = useState<boolean>(false);
   const [activationSuccess, setActivationSuccess] = useState<boolean>(false);
 
-  const getTicketData = async () => {
-    try {
-      const { data } = await axios.post(
-        `${PROJECT_HOST}/api/tickets/${params.id}`
-      );
-
-      setTicketData(data);
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error(e);
-      }
-    }
-  };
-
   const activateTicket = async () => {
     setIsLoading(true);
     try {
@@ -72,12 +62,24 @@ const Page = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
-    getTicketData();
+    (async () => {
+      try {
+        const { data } = await axios.post(
+          `${PROJECT_HOST}/api/tickets/${params.id}`
+        );
+
+        setTicketData(data);
+      } catch (e) {
+        if (e instanceof Error) {
+          console.error(e);
+        }
+      }
+    })();
   }, [params.id]);
 
   if (ticketData?.message === "Ticket not found") {
     return (
-      <ValidateTicketModal
+      <TicketActivationFormModal
         isOpen={true}
         onClose={onClose}
         onOpenChange={onOpenChange}
@@ -89,7 +91,7 @@ const Page = ({ params }: { params: { id: string } }) => {
 
   if (ticketData?.message === "Ticket sudah di aktivasi") {
     return (
-      <ValidateTicketModal
+      <TicketActivationFormModal
         isOpen={true}
         onClose={onClose}
         onOpenChange={onOpenChange}
@@ -110,7 +112,7 @@ const Page = ({ params }: { params: { id: string } }) => {
 
   return (
     <main>
-      <ValidateTicketModal
+      <TicketActivationFormModal
         isOpen={true}
         onClose={onClose}
         onOpenChange={onOpenChange}

@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { TicketAvailibilityType, TicketDetailsType } from "@/interfaces";
+import {
+  ITicketAvailibilityType,
+  ITicketDetailsType,
+} from "@/interfaces/_base";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import BookingTemplate from "@/emails-utils/BookingTemplate";
-
+import { prismaClientInstance } from "@/_base";
 import axios from "axios";
-const prisma = new PrismaClient();
 
 interface EmailPayloatInterface {
   to: string;
@@ -39,17 +40,12 @@ const sendEmail = async (data: EmailPayloatInterface) => {
         bookingLink: data.bookingLink,
       }),
     ),
-    // attachments: [{
-    //   filename: "Document",
-    //   path: data.attachmentLink,
-    //   contentType: "application/pdf",
-    // }],
   });
 };
 
 export async function GET(request: Request) {
   try {
-    const bookings = await prisma.booking.findMany({
+    const bookings = await prismaClientInstance.booking.findMany({
       select: {
         id: true,
         bookingStatus: true,
@@ -88,8 +84,8 @@ export async function GET(request: Request) {
 export async function POST(
   request: Request,
 ) {
-  let booking: TicketDetailsType = await request.json();
-  const availabilityReturnObj: TicketAvailibilityType[] = [];
+  let booking: ITicketDetailsType = await request.json();
+  const availabilityReturnObj: ITicketAvailibilityType[] = [];
   let validToBook: boolean = true;
   const xenditAuthToken = Buffer.from(`${process.env.XENDIT_API_KEY}:`)
     .toString(
@@ -137,7 +133,7 @@ export async function POST(
     //   }
     // });
 
-    const masterTicketsData = await prisma.ticket.findMany({
+    const masterTicketsData = await prismaClientInstance.ticket.findMany({
       where: {
         OR: booking.details.map((e) => {
           return { id: { equals: e.ticketId } };
@@ -192,7 +188,7 @@ export async function POST(
     });
 
     // ** 3 Create Booking & Details
-    const newBooking = await prisma.booking.create({
+    const newBooking = await prismaClientInstance.booking.create({
       data: {
         bookingStatus: "PENDING",
         generatedBookingCode: generateBookingCode(10),
@@ -247,16 +243,6 @@ export async function POST(
             price: e.price,
           };
         }),
-        // fees: [
-        //   {
-        //     type: "Admin Fee",
-        //     value: (10 / 100) *
-        //       booking.details.map((e) => e.price * e.quantity).reduce(
-        //         (a, b) => a + b,
-        //         0,
-        //       ),
-        //   },
-        // ],
       },
       {
         headers: {
@@ -273,7 +259,7 @@ export async function POST(
     } = data;
 
     // ** 5 Create Payment
-    await prisma.payment.create({
+    await prismaClientInstance.payment.create({
       data: {
         amount: xenditInvoiceAmount,
         bookingId: newBooking.id,

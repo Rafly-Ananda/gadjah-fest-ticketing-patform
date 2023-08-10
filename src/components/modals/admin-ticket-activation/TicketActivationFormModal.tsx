@@ -22,7 +22,7 @@ interface APIResponseData extends PurchasedTicket {
   booking: Booking;
 }
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: any;
@@ -32,7 +32,7 @@ interface ComponentProps {
   ticketData?: validateAPIResponseType;
 }
 
-const ValidateTicketModal: FC<ComponentProps> = ({
+const TicketActivationFormModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
   onClose,
@@ -90,4 +90,4 @@ const ValidateTicketModal: FC<ComponentProps> = ({
   );
 };
 
-export default ValidateTicketModal;
+export default TicketActivationFormModal;

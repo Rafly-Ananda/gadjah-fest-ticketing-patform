@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: any;
@@ -24,7 +24,7 @@ interface ComponentProps {
   activationSuccess: boolean;
 }
 
-const TicketActivationConfirmationModal: FC<ComponentProps> = ({
+const TicketActivationConfirmationModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
   onClose,

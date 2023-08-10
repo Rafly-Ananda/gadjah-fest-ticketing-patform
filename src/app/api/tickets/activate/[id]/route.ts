@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { prismaClientInstance } from "@/_base";
 
-const prisma = prismaClientInstance;
-
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
-    const updatedTicket = await prisma.purchasedTicket.update({
+    const updatedTicket = await prismaClientInstance.purchasedTicket.update({
       where: {
         id: params.id,
       },

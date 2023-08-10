@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prismaClientInstance } from "@/_base";
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
-    const booking = await prisma.booking.findFirst({
+    const booking = await prismaClientInstance.booking.findFirst({
       where: {
         generatedBookingCode: params.id,
       },
@@ -33,12 +32,6 @@ export async function GET(
           },
         },
       },
-      // include: {
-      //   bookingDetails: true,
-      //   payment: true,
-      //   user: true,
-      //   purchasedTickets: true,
-      // },
     });
 
     if (booking) {

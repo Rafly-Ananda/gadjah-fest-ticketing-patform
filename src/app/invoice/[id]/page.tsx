@@ -3,26 +3,19 @@ import QRCode from "react-qr-code";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { PROJECT_HOST } from "@/config";
-
-interface UserDataType {
-  email: string;
-  firstName: string;
-  lastName: string;
-  mobileNumber: string;
-}
+import { IBuyerData } from "@/interfaces/_base";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [tickets, setTickets] = useState([]);
   const [bookingStatus, setBookingStatus] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [user, setUser] = useState<UserDataType>({
+  const [user, setUser] = useState<IBuyerData>({
     email: "",
     firstName: "",
     lastName: "",
     mobileNumber: "",
   });
-  // const [userData, setUserData] = useState;
 
   useEffect(() => {
     setIsLoading(true);

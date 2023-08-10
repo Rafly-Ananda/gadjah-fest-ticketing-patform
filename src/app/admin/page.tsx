@@ -1,14 +1,23 @@
 "use client";
+
+// ** Libs
 import React, { useState, useEffect } from "react";
-import SelfValidateTicketModal from "@/components/selfValidateTicketModal";
-import SelfValidateTicketConfirmationModal from "@/components/selfValidateTicketConfirmationModal";
-import SelfValidateTicketFinish from "@/components/selfValidateTicketFinish";
 import { useDisclosure } from "@nextui-org/react";
 import { PROJECT_HOST } from "@/config";
 import axios from "axios";
 
+// ** Components
+import SelfValidateTicketFormModal from "@/components/modals/validate/SelfValidateTicketFormModal";
+import SelfValidateTicketConfirmationModal from "@/components/modals/validate/SelfValidateTicketConfirmationModal";
+import SelfValidateTicketSuccessModal from "@/components/modals/validate/SelfValidateTicketSuccessModal";
+
 export default function Page() {
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isOpenValidate,
+    onOpen: onOpenValidate,
+    onClose: onCloseValidate,
+    onOpenChange: onOpenChangeValidate,
+  } = useDisclosure();
   const {
     isOpen: isOpenConfirmation,
     onOpen: onOpenConfirmation,
@@ -54,9 +63,8 @@ export default function Page() {
         return;
       }
 
-      console.log(data);
       setisLoading(false);
-      onClose();
+      onCloseValidate();
       onCloseConfirmation();
       onOpenFinish();
     } catch (e) {
@@ -74,19 +82,21 @@ export default function Page() {
 
   return (
     <main className="pt-28 md:pt-32">
-      <SelfValidateTicketFinish
-        isOpen={isOpenFinish}
-        onOpenChange={onOpenChangeFinish}
-      />
-      <SelfValidateTicketModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpenChange={onOpenChange}
+      <SelfValidateTicketFormModal
+        isOpen={isOpenValidate}
+        onClose={onCloseValidate}
+        onOpenChange={onOpenChangeValidate}
         bookingCode={bookingCode}
         setBookingCode={setBookingCode}
         onOpenConfirm={onOpenConfirmation}
         message={message}
       />
+
+      <SelfValidateTicketSuccessModal
+        isOpen={isOpenFinish}
+        onOpenChange={onOpenChangeFinish}
+      />
+
       <SelfValidateTicketConfirmationModal
         isOpen={isOpenConfirmation}
         onClose={onCloseConfirmation}
@@ -102,7 +112,7 @@ export default function Page() {
           <button
             className=" rounded-lg bg-[#0a6c72] w-fit h-fit p-4 text-xs font-medium
     tracking-widest text-white"
-            onClick={onOpen}
+            onClick={onOpenValidate}
           >
             Validasi Tiket
           </button>

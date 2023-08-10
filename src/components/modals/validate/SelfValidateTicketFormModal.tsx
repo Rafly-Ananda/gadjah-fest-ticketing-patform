@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import {
   Modal,
   ModalContent,
@@ -10,20 +10,24 @@ import {
   Input,
 } from "@nextui-org/react";
 
-interface ComponentProps {
+interface IComponentProps {
   isOpen: boolean;
   onOpenChange: () => void;
-  navigateToTicketDetails: (cb: any) => void;
+  onClose: any;
   bookingCode: string;
   setBookingCode: React.Dispatch<React.SetStateAction<string>>;
+  onOpenConfirm: any;
+  message: string;
 }
 
-const CheckTicketModal: FC<ComponentProps> = ({
+const SelfValidateTicketFormModal: FC<IComponentProps> = ({
   isOpen,
   onOpenChange,
-  navigateToTicketDetails,
+  onClose,
   bookingCode,
   setBookingCode,
+  onOpenConfirm,
+  message,
 }) => {
   return (
     <>
@@ -33,12 +37,13 @@ const CheckTicketModal: FC<ComponentProps> = ({
         isDismissable={false}
         placement="center"
         size="xs"
+        onClose={onClose}
       >
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Check Ticket
+                Validate Booking
               </ModalHeader>
               <ModalBody>
                 <Input
@@ -49,13 +54,14 @@ const CheckTicketModal: FC<ComponentProps> = ({
                   value={bookingCode}
                   onChange={(e) => setBookingCode((prev) => e.target.value)}
                 />
+                <h1 className="font-semibold text-sm text-red-600">
+                  {message}
+                </h1>
               </ModalBody>
               <ModalFooter>
                 <Button
                   className="bg-[#0a6c72] text-white"
-                  onPress={async () => {
-                    navigateToTicketDetails(onClose);
-                  }}
+                  onPress={onOpenConfirm}
                 >
                   Cek
                 </Button>
@@ -68,4 +74,4 @@ const CheckTicketModal: FC<ComponentProps> = ({
   );
 };
 
-export default CheckTicketModal;
+export default SelfValidateTicketFormModal;
