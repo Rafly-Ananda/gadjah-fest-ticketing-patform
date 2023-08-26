@@ -186,6 +186,7 @@ const MarathonRegistration: FC<IComponentProps> = (props) => {
                   <div className="flex w-full items-center justify-center gap-2">
                     <div className="flex w-full items-center justify-center gap-2">
                       <Button
+                      isDisabled
                         onPress={() => {
                           setSelectedMarathonId(e.id);
                           onOpenRegistration();

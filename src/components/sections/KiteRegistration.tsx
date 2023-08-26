@@ -171,6 +171,7 @@ const KiteRegistration: FC<IComponentProps> = (props) => {
                   <div className="flex w-full items-center justify-center gap-2">
                     <div className="flex w-full items-center justify-center gap-2">
                       <Button
+                      isDisabled
                         onPress={() => {
                           onOpenRegistration();
                           setSelectedKiteId(e.id);

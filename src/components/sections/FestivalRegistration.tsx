@@ -271,6 +271,7 @@ const FestivalRegistration: FC<IComponentProps> = (props) => {
         </div>
         {props.ticketsList.length > 0 && (
           <Button
+            isDisabled
             onPress={onOpenRegistration}
             className="bg-[#0a6c72] hover:bg-[#08555a] text-white w-[300px]"
           >
